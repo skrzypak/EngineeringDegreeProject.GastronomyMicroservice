@@ -8,7 +8,7 @@ namespace GastronomyMicroservice.Core.Fluent.Entities
     public class Ingredient : IEntity
     {
         public int Id { get; set; }
-        public float PercentOfUse { get; set; }
+        public float ValueOfUse { get; set; }
         public int ProductId { get; set; }
         public virtual Product Product { get; set; }
         public int DishId { get; set; }

@@ -18,7 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Core\Controllers\Single\" />
     <Folder Include="Core\Fluent\Configurations\" />
+    <Folder Include="Core\Models\ViewModel\" />
   </ItemGroup>
 
 </Project>
