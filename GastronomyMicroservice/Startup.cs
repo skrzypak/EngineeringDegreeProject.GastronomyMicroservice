@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GastronomyMicroservice.Core.Fluent;
+using GastronomyMicroservice.Core.Interfaces.Services;
 using GastronomyMicroservice.Core.Middlewares;
+using GastronomyMicroservice.Core.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -44,6 +46,8 @@ namespace GastronomyMicroservice
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GastronomyMicroservice", Version = "v1" });
             });
+
+            services.AddScoped<IParticipantService, ParticipantService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,7 +60,7 @@ namespace GastronomyMicroservice
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GastronomyMicroservice v1"));
             }
 
-            app.UseMiddleware<ErrorHandlingMiddleware>();
+            //app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseRouting();
 
