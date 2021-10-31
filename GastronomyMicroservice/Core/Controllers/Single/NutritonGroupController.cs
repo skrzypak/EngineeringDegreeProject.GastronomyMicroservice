@@ -15,9 +15,9 @@ namespace GastronomyMicroservice.Core.Controllers.Single
     public class NutritonGroupController : ControllerBase
     {
         private readonly ILogger<NutritonGroupController> _logger;
-        private readonly INutritionGroup _nutritionGroupService;
+        private readonly INutritionGroupService _nutritionGroupService;
 
-        public NutritonGroupController(ILogger<NutritonGroupController> logger, INutritionGroup nutritionGroupService)
+        public NutritonGroupController(ILogger<NutritonGroupController> logger, INutritionGroupService nutritionGroupService)
         {
             _logger = logger;
             _nutritionGroupService = nutritionGroupService;

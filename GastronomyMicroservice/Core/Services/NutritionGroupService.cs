@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace GastronomyMicroservice.Core.Services
 {
-    public class NutritionGroupService : INutritionGroup
+    public class NutritionGroupService : INutritionGroupService
     {
         private readonly ILogger<NutritionGroupService> _logger;
         private readonly MicroserviceContext _context;

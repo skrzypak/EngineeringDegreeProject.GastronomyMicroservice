@@ -15,13 +15,13 @@ namespace GastronomyMicroservice.Core.Fluent.Configurations
             modelBuilder.HasKey(a => a.Id);
             modelBuilder.Property(a => a.Id).IsRequired();
 
-            modelBuilder.Property(a => a.Date).IsRequired();
+            modelBuilder.Property(a => a.OrderNumber).IsRequired();
             modelBuilder.Property(a => a.MenuId).IsRequired();
             modelBuilder.Property(a => a.NutritionPlanId).IsRequired();
 
             modelBuilder.ToTable("MenusToNutritonPlans");
             modelBuilder.Property(a => a.Id).HasColumnName("Id");
-            modelBuilder.Property(a => a.Date).HasColumnName("Date");
+            modelBuilder.Property(a => a.OrderNumber).HasColumnName("OrderNumber");
             modelBuilder.Property(a => a.MenuId).HasColumnName("MenuId");
             modelBuilder.Property(a => a.NutritionPlanId).HasColumnName("NutritionPlanId");
         }

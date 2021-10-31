@@ -48,7 +48,8 @@ namespace GastronomyMicroservice
             });
 
             services.AddScoped<IParticipantService, ParticipantService>();
-            services.AddScoped<INutritionGroup, NutritionGroupService>();
+            services.AddScoped<INutritionGroupService, NutritionGroupService>();
+            services.AddScoped<INutritionPlanService, NutritionPlanService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

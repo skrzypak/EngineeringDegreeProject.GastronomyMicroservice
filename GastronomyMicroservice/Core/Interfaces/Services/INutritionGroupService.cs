@@ -6,7 +6,7 @@ using GastronomyMicroservice.Core.Models.Dto.NutritionGroup;
 
 namespace GastronomyMicroservice.Core.Interfaces.Services
 {
-    public interface INutritionGroup
+    public interface INutritionGroupService
     {
         public object Get();
         public object GetById(int nutiGrpId);
