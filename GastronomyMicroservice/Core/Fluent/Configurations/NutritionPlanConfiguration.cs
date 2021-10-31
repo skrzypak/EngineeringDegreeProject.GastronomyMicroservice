@@ -15,17 +15,15 @@ namespace GastronomyMicroservice.Core.Fluent.Configurations
             modelBuilder.HasKey(a => a.Id);
             modelBuilder.Property(a => a.Id).IsRequired();
 
-            modelBuilder.Property(a => a.StartDate).IsRequired();
-            modelBuilder.Property(a => a.EndDate).IsRequired();
+            modelBuilder.Property(a => a.Code).HasMaxLength(6).IsRequired(false);
+            modelBuilder.Property(a => a.Name).HasMaxLength(300).IsRequired();
             modelBuilder.Property(a => a.Description).HasMaxLength(3000).IsRequired(false);
-            modelBuilder.Property(a => a.NutritionGroupId).IsRequired();
 
             modelBuilder.ToTable("NutritionPlans");
             modelBuilder.Property(a => a.Id).HasColumnName("Id");
-            modelBuilder.Property(a => a.StartDate).HasColumnName("StartDate");
-            modelBuilder.Property(a => a.EndDate).HasColumnName("EndDate");
+            modelBuilder.Property(a => a.Code).HasColumnName("Code");
+            modelBuilder.Property(a => a.Name).HasColumnName("Name");
             modelBuilder.Property(a => a.Description).HasColumnName("Description");
-            modelBuilder.Property(a => a.NutritionGroupId).HasColumnName("NutritionGroupId");
         }
     }
 }

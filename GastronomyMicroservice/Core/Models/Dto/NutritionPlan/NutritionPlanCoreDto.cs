@@ -11,7 +11,6 @@ namespace GastronomyMicroservice.Core.Models.Dto.NutritionPlan
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string Description { get; set; }
-        public int NutritionGroupId { get; set; }
         public ICollection<int> MenusIds { get; set; }
         public ICollection<MenuCoreDto> Menus { get; set; }
     }

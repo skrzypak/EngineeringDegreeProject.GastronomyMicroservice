@@ -15,9 +15,10 @@ namespace GastronomyMicroservice.Core.Fluent
         public DbSet<Dish> Dishes { get; set; }
         public DbSet<DishToMenu> DishToMenus { get; set; }
         public DbSet<Menu> Menues { get; set; }
-        public DbSet<MenuToNutritonPlan> MenuesToNutritonPlans { get; set; }
+        public DbSet<MenuToNutritonPlan> MenusToNutritonPlans { get; set; }
         public DbSet<NutritionGroup> NutritionGroups { get; set; }
         public DbSet<NutritionGroupToParticipant> NutritionGroupsToParticipants { get; set; }
+        public DbSet<NutritionGroupToNutritionPlan> NutritionsGroupsToNutritionsPlans { get; set; }
         public DbSet<NutritionPlan> NutritionPlans { get; set; }
         public DbSet<Participant> Participants { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -45,6 +46,7 @@ namespace GastronomyMicroservice.Core.Fluent
             modelBuilder.ApplyConfiguration(new MenuToNutritonPlanConfiguration());
             modelBuilder.ApplyConfiguration(new NutritionGroupConfiguration());
             modelBuilder.ApplyConfiguration(new NutritionGroupToParticipantConfiguration());
+            modelBuilder.ApplyConfiguration(new NutritionGroupToNutritionPlanConfiguration());
             modelBuilder.ApplyConfiguration(new NutritionPlanConfiguration());
             modelBuilder.ApplyConfiguration(new ParticipantConfiguration());
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
