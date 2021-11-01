@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using GastronomyMicroservice.Core.Fluent;
 using GastronomyMicroservice.Core.Fluent.Entities;
@@ -39,7 +38,7 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public void AddParticipants(int nutiGrpId, ICollection<int> parcsIds)
+        public void AddParticipant(int nutiGrpId, ICollection<int> parcsIds)
         {
             var models = new List<NutritionGroupToParticipant>();
 
@@ -58,9 +57,9 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public int Create(NutritionGroupCoreDto dto)
+        public int Create(NutritionGroupCoreDto<int> dto)
         {
-            var model = _mapper.Map<NutritionGroupCoreDto, NutritionGroup>(dto);
+            var model = _mapper.Map<NutritionGroupCoreDto<int>, NutritionGroup>(dto);
 
             _context.NutritionGroups.AddRange(model);
             _context.SaveChanges();

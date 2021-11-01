@@ -9,13 +9,13 @@ namespace GastronomyMicroservice.Core.Interfaces.Services
 {
     public interface IDishService
     {
-        public object GetDishes();
-        public object GetDishById(int dishId);
+        public object Get();
+        public object GetById(int dishId);
         public object GetDishIngredients(int dishId);
         public object GetDishAllergens(int dishId);
-        public int CreateDish(DishCoreDto<IngredientCoreDto> dto);
-        public void DeleteDish(int dishId);
-        public void AddDishIngredients(int dishId, ICollection<IngredientCoreDto> ingredients);
+        public int Create(DishCoreDto<IngredientCoreDto> dto);
+        public void Delete(int dishId);
+        public void CreateDishIngredients(int dishId, ICollection<IngredientCoreDto> ingredients);
         public void DeleteDishIngredients(int dishId, ICollection<int> ingredientsIds);
     }
 }

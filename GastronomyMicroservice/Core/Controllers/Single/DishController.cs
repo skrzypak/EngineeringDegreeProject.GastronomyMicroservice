@@ -24,23 +24,23 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpPatch("{dishId}/ingredient/add")]
-        public ActionResult AddDishIngredients([FromRoute] int dishId, [FromBody] ICollection<IngredientCoreDto> ingredients)
+        public ActionResult CreateDishIngredients([FromRoute] int dishId, [FromBody] ICollection<IngredientCoreDto> ingredients)
         {
-            _dishService.AddDishIngredients(dishId, ingredients);
+            _dishService.CreateDishIngredients(dishId, ingredients);
             return NoContent();
         }
 
         [HttpPost]
-        public ActionResult<int> CreateDish(DishCoreDto<IngredientCoreDto> dto)
+        public ActionResult<int> Create(DishCoreDto<IngredientCoreDto> dto)
         {
-            var id = _dishService.CreateDish(dto);
-            return CreatedAtAction(nameof(GetDishById), new { dishId = id }, null);
+            var id = _dishService.Create(dto);
+            return CreatedAtAction(nameof(GetById), new { dishId = id }, null);
         }
 
         [HttpDelete]
-        public ActionResult DeleteDish(int dishId)
+        public ActionResult Delete(int dishId)
         {
-            _dishService.DeleteDish(dishId);
+            _dishService.Delete(dishId);
             return NoContent();
         }
 
@@ -59,16 +59,16 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpGet("{dishId}")]
-        public ActionResult<object> GetDishById(int dishId)
+        public ActionResult<object> GetById(int dishId)
         {
-            var response = _dishService.GetDishById(dishId);
+            var response = _dishService.GetById(dishId);
             return Ok(response);
         }
 
         [HttpGet]
-        public ActionResult<object> GetDishes()
+        public ActionResult<object> Get()
         {
-            var response = _dishService.GetDishes();
+            var response = _dishService.Get();
             return Ok(response);
         }
 

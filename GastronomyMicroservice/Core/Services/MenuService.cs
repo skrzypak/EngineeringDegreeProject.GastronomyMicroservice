@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using GastronomyMicroservice.Core.Exceptions;
 using GastronomyMicroservice.Core.Fluent;
@@ -26,7 +24,7 @@ namespace GastronomyMicroservice.Core.Services
             _mapper = mapper;
         }
 
-        public int CreateMenu(MenuCoreDto<int> dto)
+        public int Create(MenuCoreDto<int> dto)
         {
             var model = _mapper.Map<MenuCoreDto<int>, Menu>(dto);
 
@@ -36,7 +34,7 @@ namespace GastronomyMicroservice.Core.Services
             return model.Id;
         }
 
-        public void DeleteMenu(int menuId)
+        public void Delete(int menuId)
         {
             var model = new Menu() { Id = menuId };
 
@@ -45,7 +43,7 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public object GetMenus()
+        public object Get()
         {
             var dtos = _context.Menus
                 .AsNoTracking()

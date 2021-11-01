@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using GastronomyMicroservice.Core.Interfaces.Services;
 using GastronomyMicroservice.Core.Models.Dto.Menu;
 using Microsoft.AspNetCore.Mvc;
@@ -23,23 +20,23 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpPost]
-        public ActionResult CreateMenu([FromBody] MenuCoreDto<int> dto)
+        public ActionResult Create([FromBody] MenuCoreDto<int> dto)
         {
-            var id = _menuService.CreateMenu(dto);
+            var id = _menuService.Create(dto);
             return CreatedAtAction(nameof(GetById), new { menuId = id }, null);
         }
 
         [HttpDelete("{menuId}")]
-        public ActionResult DeleteMenu([FromRoute] int menuId)
+        public ActionResult Delete([FromRoute] int menuId)
         {
-            _menuService.DeleteMenu(menuId);
+            _menuService.Delete(menuId);
             return NoContent();
         }
 
         [HttpGet]
-        public ActionResult<object> GetMenus()
+        public ActionResult<object> Get()
         {
-            var response = _menuService.GetMenus();
+            var response = _menuService.Get();
             return Ok(response);
         }
 

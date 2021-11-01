@@ -57,7 +57,7 @@ namespace GastronomyMicroservice.Core.Mappers.AutoMapper
                 .AfterMap((src, dest) => {
                     dest.NutritionsGroupsToParticipants = new HashSet<NutritionGroupToParticipant>();
 
-                    using(var enumerator = src.NutritionsGroups.GetEnumerator())
+                    using(var enumerator = src.NutritionGroups.GetEnumerator())
                     {
                         while (enumerator.MoveNext())
                         {
@@ -69,12 +69,12 @@ namespace GastronomyMicroservice.Core.Mappers.AutoMapper
                     }
                 });
 
-            CreateMap<NutritionGroupCoreDto, NutritionGroup>()
+            CreateMap<NutritionGroupCoreDto<int>, NutritionGroup>()
                 .ForMember(dest => dest.NutritionsGroupsToParticipants, opt => opt.Ignore())
                 .AfterMap((src, dest) => {
                     dest.NutritionsGroupsToParticipants = new HashSet<NutritionGroupToParticipant>();
 
-                    using (var enumerator = src.ParticipantsIds.GetEnumerator())
+                    using (var enumerator = src.Participants.GetEnumerator())
                     {
                         while (enumerator.MoveNext())
                         {

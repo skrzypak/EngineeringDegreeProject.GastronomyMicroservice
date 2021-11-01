@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using GastronomyMicroservice.Core.Fluent;
 using GastronomyMicroservice.Core.Interfaces.Services;
 using GastronomyMicroservice.Core.Middlewares;
@@ -33,7 +30,7 @@ namespace GastronomyMicroservice
             services.AddDbContext<MicroserviceContext>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), builder => {
-                    //builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 });
             });
 
@@ -64,7 +61,7 @@ namespace GastronomyMicroservice
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GastronomyMicroservice v1"));
             }
 
-            //app.UseMiddleware<ErrorHandlingMiddleware>();
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseRouting();
 

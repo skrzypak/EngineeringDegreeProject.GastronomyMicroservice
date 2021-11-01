@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using GastronomyMicroservice.Core.Interfaces.Services;
 using GastronomyMicroservice.Core.Models.Dto.NutritionGroup;
-using GastronomyMicroservice.Core.Models.Dto.Participant;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -33,12 +30,12 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         [HttpPatch("{nutiGrpId}")]
         public ActionResult AddParticipants([FromRoute] int nutiGrpId, [FromBody] ICollection<int> parcsIds)
         {
-            _nutritionGroupService.AddParticipants(nutiGrpId, parcsIds);
+            _nutritionGroupService.AddParticipant(nutiGrpId, parcsIds);
             return NoContent();
         }
 
         [HttpPost]
-        public ActionResult Create([FromBody] NutritionGroupCoreDto dto)
+        public ActionResult Create([FromBody] NutritionGroupCoreDto<int> dto)
         {
             var id = _nutritionGroupService.Create(dto);
             return CreatedAtAction(nameof(GetById), new { nutiGrpId = id }, null);

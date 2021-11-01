@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GastronomyMicroservice.Core.Interfaces.Services;
+﻿using GastronomyMicroservice.Core.Interfaces.Services;
 using GastronomyMicroservice.Core.Models.Dto.NutritionPlan;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

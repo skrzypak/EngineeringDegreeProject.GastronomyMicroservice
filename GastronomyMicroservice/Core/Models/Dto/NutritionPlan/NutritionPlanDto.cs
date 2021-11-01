@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace GastronomyMicroservice.Core.Models.Dto.NutritionPlan
 {
-    public class NutritionPlanDto<TM> : NutritionPlanCoreDto<TM>
+    public class NutritionPlanDto<TM, TNG> : NutritionPlanCoreDto<TM>
     {
         public int Id { get; set; }
-        public int NutritionGroupId { get; set; }
+        public TNG NutritionGroup { get; set; }
     }
 }

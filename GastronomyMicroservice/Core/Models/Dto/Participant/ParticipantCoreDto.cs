@@ -11,6 +11,6 @@ namespace GastronomyMicroservice.Core.Models.Dto.Participant
         public string LastName { get; set; }
         public string Description { get; set; }
         public string FullName => $"{FirstName} {LastName}";
-        public virtual ICollection<TNG> NutritionsGroups { get; set; } = new List<TNG>();
+        public virtual ICollection<TNG> NutritionGroups { get; set; } = new List<TNG>();
     }
 }

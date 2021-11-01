@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using GastronomyMicroservice.Core.Exceptions;
 using GastronomyMicroservice.Core.Fluent;
@@ -27,7 +25,7 @@ namespace GastronomyMicroservice.Core.Services
             _mapper = mapper;
         }
 
-        public void AddDishIngredients(int dishId, ICollection<IngredientCoreDto> ingredients)
+        public void CreateDishIngredients(int dishId, ICollection<IngredientCoreDto> ingredients)
         {
             var model = new Ingredient() { DishId = dishId };
 
@@ -46,7 +44,7 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public int CreateDish(DishCoreDto<IngredientCoreDto> dto)
+        public int Create(DishCoreDto<IngredientCoreDto> dto)
         {
             var model = _mapper.Map<DishCoreDto<IngredientCoreDto>, Dish>(dto);
 
@@ -56,7 +54,7 @@ namespace GastronomyMicroservice.Core.Services
             return model.Id;
         }
 
-        public void DeleteDish(int dishId)
+        public void Delete(int dishId)
         {
             var model = new Dish() { Id = dishId };
 
@@ -104,7 +102,7 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public object GetDishById(int dishId)
+        public object GetById(int dishId)
         {
             var dto = _context.Dishes
                  .AsNoTracking()
@@ -145,7 +143,7 @@ namespace GastronomyMicroservice.Core.Services
             return dto;
         }
 
-        public object GetDishes()
+        public object Get()
         {
             var dtos = _context.Dishes
                 .AsNoTracking()
