@@ -14,8 +14,26 @@ namespace GastronomyMicroservice.Core.Mappers.AutoMapper
     {
         public MappingProfile()
         {
-            CreateMap<IngredientCoreDto, Ingredient>();
-            CreateMap<DishCoreDto<IngredientCoreDto>, Dish>();
+            CreateMap<IngredientCoreDto, Ingredient>()
+                .ForMember(dest => dest.DishId, opt => opt.Ignore());
+
+            CreateMap<DishCoreDto<IngredientCoreDto>, Dish>()
+                .ForMember(dest => dest.Ingredients, opt => opt.Ignore())
+                 .AfterMap((src, dest) => {
+                     dest.Ingredients = new List<Ingredient>();
+
+                     using (var enumerator = src.Ingredients.GetEnumerator())
+                     {
+                         while (enumerator.MoveNext())
+                         {
+                             dest.Ingredients.Add(new Ingredient()
+                             {
+                                 ProductId = enumerator.Current.ProductId,
+                                 ValueOfUse = enumerator.Current.ValueOfUse,
+                             });
+                         }
+                     }
+                 });
 
             CreateMap<MenuCoreDto<int>, Menu>()
                 .ForMember(dest => dest.DishsToMenus, opt => opt.Ignore())
