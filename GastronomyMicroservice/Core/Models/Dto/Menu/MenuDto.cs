@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GastronomyMicroservice.Core.Models.Dto.Menu
 {
-    public class MenuDto<TNP> : MenuCoreDto
+    public class MenuDto<TNP, TD> : MenuCoreDto<TD>
     {
         public int Id { get; set; }
         public virtual ICollection<TNP> NutritonsPlans { get; set; }

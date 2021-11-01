@@ -14,7 +14,8 @@ namespace GastronomyMicroservice.Core.Fluent
         public DbSet<AllergenToProduct> AllergensToProducts { get; set; }
         public DbSet<Dish> Dishes { get; set; }
         public DbSet<DishToMenu> DishToMenus { get; set; }
-        public DbSet<Menu> Menues { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
+        public DbSet<Menu> Menus { get; set; }
         public DbSet<MenuToNutritonPlan> MenusToNutritonPlans { get; set; }
         public DbSet<NutritionGroup> NutritionGroups { get; set; }
         public DbSet<NutritionGroupToParticipant> NutritionGroupsToParticipants { get; set; }
