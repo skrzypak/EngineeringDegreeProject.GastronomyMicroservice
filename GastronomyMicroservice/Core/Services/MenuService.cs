@@ -87,7 +87,6 @@ namespace GastronomyMicroservice.Core.Services
                         dtm.Dish.Description,
                         Allergens = dtm.Dish.Ingredients.SelectMany(i => i.Product.AllergensToProducts.Select(atp => new
                         {
-                            atp.Id,
                             atp.AllergenId,
                             atp.Allergen.Code,
                             atp.Allergen.Name,
@@ -121,7 +120,6 @@ namespace GastronomyMicroservice.Core.Services
                 .Where(dtm => dtm.MenuId == menuId)
                 .SelectMany(dtm => dtm.Dish.Ingredients.SelectMany(i => i.Product.AllergensToProducts.Select(atp => new
                     {
-                        atp.Id,
                         atp.AllergenId,
                         atp.Allergen.Name,
                         atp.Allergen.Code,
@@ -143,7 +141,6 @@ namespace GastronomyMicroservice.Core.Services
                 .Where(i => i.DishId == dishId)
                 .SelectMany(i => i.Product.AllergensToProducts.Select(atp => new
                     {
-                        atp.Id,
                         atp.AllergenId,
                         atp.Allergen.Name,
                         atp.Allergen.Code,
@@ -172,7 +169,6 @@ namespace GastronomyMicroservice.Core.Services
                     dtm.Dish.Description,
                     Allergens = dtm.Dish.Ingredients.Select(i => i.Product.AllergensToProducts.Select(atp => new
                     {
-                        atp.Id,
                         atp.AllergenId,
                         atp.Allergen.Code,
                         atp.Allergen.Name,

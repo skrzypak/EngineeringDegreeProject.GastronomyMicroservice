@@ -7,6 +7,5 @@ namespace GastronomyMicroservice.Core.Fluent.Entities
 {
     public interface IEntity
     {
-        public int Id { get; set; }
     }
 }

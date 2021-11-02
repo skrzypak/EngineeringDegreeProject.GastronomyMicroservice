@@ -70,14 +70,29 @@ namespace GastronomyMicroservice.Comunication.Consumers
 
         private Product MapToModel(ProductPayloadValue val)
         {
-            return new Product()
+            var model = new Product()
             {
                 Id = val.Id,
                 Code = val.Code,
                 Name = val.Name,
                 Unit = val.Unit,
-                Description = val.Description
+                Description = val.Description,
+                AllergensToProducts = new HashSet<AllergenToProduct>()
             };
+
+            foreach(var map in val.Allergens)
+            {
+                if (map.Value == CRUD.Create || map.Value == CRUD.Update || map.Value == CRUD.Exists)
+                {
+                    model.AllergensToProducts.Add(new AllergenToProduct()
+                    {
+                        AllergenId = map.Key,
+                        ProductId = model.Id
+                    });
+                }
+            }
+
+            return model;
         }
 
 

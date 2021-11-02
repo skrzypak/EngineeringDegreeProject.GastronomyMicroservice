@@ -49,14 +49,14 @@ namespace GastronomyMicroservice
                         h.Password("guest");
                     });
 
-                    config.ReceiveEndpoint("allergenQueue", ep =>
+                    config.ReceiveEndpoint("msgas.allergen.queue", ep =>
                     {
                         ep.PrefetchCount = 16;
                         ep.UseMessageRetry(r => r.Interval(2, 100));
                         ep.ConfigureConsumer<AllergenConsumer>(provider);
                     });
 
-                    config.ReceiveEndpoint("productQueue", ep =>
+                    config.ReceiveEndpoint("msgas.product.queue", ep =>
                     {
                         ep.PrefetchCount = 16;
                         ep.UseMessageRetry(r => r.Interval(2, 100));

@@ -132,7 +132,6 @@ namespace GastronomyMicroservice.Core.Services
                             }),
                             Allergens = dtm.Dish.Ingredients.Select(i => 
                                 i.Product.AllergensToProducts.Select(atp => new {
-                                    atp.Id,
                                     atp.AllergenId,
                                     atp.ProductId,
                                     atp.Allergen.Code,
