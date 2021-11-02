@@ -1,8 +1,11 @@
 using System;
+using GastronomyMicroservice.Comunication.Consumers;
 using GastronomyMicroservice.Core.Fluent;
 using GastronomyMicroservice.Core.Interfaces.Services;
 using GastronomyMicroservice.Core.Middlewares;
 using GastronomyMicroservice.Core.Services;
+using GreenPipes;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +36,36 @@ namespace GastronomyMicroservice
                     builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 });
             });
+
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<AllergenConsumer>();
+                x.AddConsumer<ProductConsumer>();
+                x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
+                {
+                    config.Host(new Uri("rabbitmq://localhost"), h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+
+                    config.ReceiveEndpoint("allergenQueue", ep =>
+                    {
+                        ep.PrefetchCount = 16;
+                        ep.UseMessageRetry(r => r.Interval(2, 100));
+                        ep.ConfigureConsumer<AllergenConsumer>(provider);
+                    });
+
+                    config.ReceiveEndpoint("productQueue", ep =>
+                    {
+                        ep.PrefetchCount = 16;
+                        ep.UseMessageRetry(r => r.Interval(2, 100));
+                        ep.ConfigureConsumer<ProductConsumer>(provider);
+                    });
+
+                }));
+            });
+            services.AddMassTransitHostedService();
 
             services.AddControllers();
             services.AddScoped<ErrorHandlingMiddleware>();

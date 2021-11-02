@@ -13,7 +13,7 @@ namespace GastronomyMicroservice.Core.Fluent.Configurations
         public void Configure(EntityTypeBuilder<Product> modelBuilder)
         {
             modelBuilder.HasKey(a => a.Id);
-            modelBuilder.Property(a => a.Id).IsRequired();
+            modelBuilder.Property(a => a.Id).ValueGeneratedNever().IsRequired();
 
             modelBuilder.Property(a => a.Code).HasMaxLength(6).IsRequired(false);
             modelBuilder.Property(a => a.Name).HasMaxLength(300).IsRequired();
