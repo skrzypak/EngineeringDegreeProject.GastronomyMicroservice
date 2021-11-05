@@ -54,10 +54,10 @@ namespace GastronomyMicroservice.Core.Services
                     m.Name,
                     m.Description
                 })
-                .ToHashSet()
+                .AsEnumerable()
                 .OrderBy(mx => mx.Name);
 
-            if (dtos is null)
+            if (dtos is null || dtos.Count() == 0)
             {
                 throw new NotFoundException($"NOT FOUND any menu");
             }
