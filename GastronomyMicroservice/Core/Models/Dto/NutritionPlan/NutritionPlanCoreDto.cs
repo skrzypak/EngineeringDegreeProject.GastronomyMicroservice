@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GastronomyMicroservice.Core.Models.Dto.Menu;
 
 namespace GastronomyMicroservice.Core.Models.Dto.NutritionPlan
 {
@@ -11,6 +8,12 @@ namespace GastronomyMicroservice.Core.Models.Dto.NutritionPlan
         public string Code { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public virtual ICollection<TM> Menus { get; set; }
+        public virtual ICollection<MenuDatePair<TM>> Menus { get; set; }
+    }
+
+    public class MenuDatePair<TM>
+    {
+        public TM Menu { get; set; }
+        public DateTime TargetDate { get; set; }
     }
 }

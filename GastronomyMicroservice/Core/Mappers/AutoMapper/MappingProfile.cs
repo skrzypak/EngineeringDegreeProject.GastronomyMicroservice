@@ -46,7 +46,8 @@ namespace GastronomyMicroservice.Core.Mappers.AutoMapper
                         {
                             dest.DishsToMenus.Add(new DishToMenu()
                             {
-                                DishId = enumerator.Current,
+                                DishId = enumerator.Current.Dish,
+                                Meal = enumerator.Current.MealType
                             });
                         }
                     }
@@ -98,7 +99,8 @@ namespace GastronomyMicroservice.Core.Mappers.AutoMapper
                         {
                             dest.MenusToNutritonsPlans.Add(new MenuToNutritonPlan()
                             {
-                                MenuId = enumerator.Current
+                                MenuId = enumerator.Current.Menu,
+                                TargetDate = enumerator.Current.TargetDate
                             });
                         }
                     }

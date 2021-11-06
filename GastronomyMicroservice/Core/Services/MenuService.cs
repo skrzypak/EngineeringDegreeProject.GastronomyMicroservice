@@ -72,36 +72,36 @@ namespace GastronomyMicroservice.Core.Services
                 .Include(m => m.DishsToMenus)
                     .ThenInclude(dtm => dtm.Dish)
                 .Where(m => m.Id == menuId)
-                .Select(m => new
+                .Select(d => new
                 {
-                    m.Id,
-                    m.Code,
-                    m.Name,
-                    m.Description,
-                    Dishes = m.DishsToMenus.Select(dtm => new
+                    MenuId = d.Id, d.Code, d.Name, d.Description,
+                    Value = d.DishsToMenus.Select(dtm => new
                     {
-                        dtm.Id,
-                        dtm.DishId,
-                        dtm.Meal,
-                        dtm.Dish.Name,
-                        dtm.Dish.Description,
+                        dtm.Meal, dtm.DishId, dtm.Dish.Name, dtm.Dish.Description,
+                        Ingredients = dtm.Dish.Ingredients.Select(i => new
+                        {
+                            i.ProductId, i.Product.Name, i.Product.Code, i.ValueOfUse, i.Product.Unit
+                        }),
                         Allergens = dtm.Dish.Ingredients.SelectMany(i => i.Product.AllergensToProducts.Select(atp => new
                         {
-                            atp.AllergenId,
-                            atp.Allergen.Code,
-                            atp.Allergen.Name,
-                            atp.Allergen.Description
+                            Id = atp.AllergenId, atp.Allergen.Code, atp.Allergen.Name, atp.Allergen.Description
                         }))
-                        .AsEnumerable()
-                        //.Distinct()
-
                     })
-                    .AsEnumerable()
-                    //.GroupBy(dtmx => dtmx.Meal)
-                    //.ToList()
-
-                 })
-                .FirstOrDefault();
+                }).ToList().GroupBy(dx => new {dx.MenuId, dx.Code, dx.Name, dx.Description}).Select(dxg => new
+                {
+                    dxg.Key,
+                    Meals = dxg.SelectMany(g => g.Value.Select(gg => new { gg.Meal, gg.DishId, gg.Name, gg.Description, gg.Ingredients}))
+                            .ToList().GroupBy(dxg => new { dxg.Meal }).Select(dxgg => new { 
+                                dxgg.Key,
+                                Dishes = dxgg.Select(g => new { g.DishId, g.Name, g.Description, g.Ingredients  })
+                            }),
+                    Ingredients = dxg.SelectMany(g => g.Value.SelectMany(gg => gg.Ingredients)).ToList()
+                                 .GroupBy(ggg => new { ggg.ProductId, ggg.Code, ggg.Name, ggg.Unit }).Select(gggx  => new { 
+                                    gggx.Key,
+                                    Total = gggx.Sum(g => g.ValueOfUse)
+                                 }),
+                    Allergens = dxg.SelectMany(g => g.Value.SelectMany(gg => gg.Allergens)).ToList().Distinct()
+                }).FirstOrDefault();
 
             if (dto is null)
             {
@@ -109,29 +109,6 @@ namespace GastronomyMicroservice.Core.Services
             }
 
             return dto;
-        }
-
-        public object GetMenuAllergens(int menuId)
-        {
-            var dtos = _context.DishToMenus
-                .AsNoTracking()
-                .Include(dtm => dtm.Dish)
-                    .ThenInclude(d => d.Ingredients)
-                .Where(dtm => dtm.MenuId == menuId)
-                .SelectMany(dtm => dtm.Dish.Ingredients.SelectMany(i => i.Product.AllergensToProducts.Select(atp => new
-                    {
-                        atp.AllergenId,
-                        atp.Allergen.Name,
-                        atp.Allergen.Code,
-                        atp.Allergen.Description
-                    })
-                    .AsEnumerable()
-                    .Distinct()
-                 ))
-                .AsEnumerable()
-                .Distinct();
-
-            return dtos;
         }
 
         public object GetDishAllergens(int dishId)
@@ -153,36 +130,6 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public object GetMenuDishes(int menuId)
-        {
-            var dtos = _context.DishToMenus
-                .AsNoTracking()
-                .Include(dtm => dtm.Dish)
-                    .ThenInclude(d => d.Ingredients)
-                .Where(dtm => dtm.MenuId == menuId)
-                .Select(dtm => new
-                {
-                    dtm.Id,
-                    dtm.DishId,
-                    dtm.Meal,
-                    dtm.Dish.Name,
-                    dtm.Dish.Description,
-                    Allergens = dtm.Dish.Ingredients.Select(i => i.Product.AllergensToProducts.Select(atp => new
-                    {
-                        atp.AllergenId,
-                        atp.Allergen.Code,
-                        atp.Allergen.Name,
-                        atp.Allergen.Description
-                    }))
-
-                })
-                .AsEnumerable()
-                .GroupBy(dtmx => dtmx.Meal)
-                .ToList();
-                
-            return dtos;
-        }
-
         public void RemoveDishesFromMenu(int menuId, ICollection<int> dishesIds)
         {
             var model = new DishToMenu() { MenuId = menuId };
@@ -201,16 +148,18 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public ICollection<int> SetDishesToMenu(int menuId, ICollection<int> dishesIds)
+        public ICollection<int> SetDishesToMenu(int menuId, ICollection<DishMealPair<int>> dishMealPairs)
         {
             var model = new DishToMenu() { MenuId = menuId };
+            
             var responseIds = new HashSet<int>();
 
-            using (var enumerator = dishesIds.GetEnumerator())
+            using (var enumerator = dishMealPairs.GetEnumerator())
             {
                 while (enumerator.MoveNext())
                 {
-                    model.DishId = enumerator.Current;
+                    model.DishId = enumerator.Current.Dish;
+                    model.Meal = enumerator.Current.MealType;
 
                     _context.DishToMenus.Add(model);
                     responseIds.Add(model.Id);

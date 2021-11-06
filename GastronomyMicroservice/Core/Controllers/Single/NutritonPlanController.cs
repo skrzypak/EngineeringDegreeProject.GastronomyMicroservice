@@ -1,4 +1,5 @@
-﻿using GastronomyMicroservice.Core.Interfaces.Services;
+﻿using System;
+using GastronomyMicroservice.Core.Interfaces.Services;
 using GastronomyMicroservice.Core.Models.Dto.NutritionPlan;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,9 +20,9 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpPatch("{nutiPlsId}/menu/{menuId}")]
-        public ActionResult AddMenu([FromRoute] int nutiPlsId, [FromRoute] int menuId, [FromQuery] int orderNumber)
+        public ActionResult AddMenu([FromRoute] int nutiPlsId, [FromRoute] int menuId, [FromQuery] DateTime targetDate)
         {
-            _nutritionPlanService.AddMenu(nutiPlsId, menuId, orderNumber);
+            _nutritionPlanService.AddMenu(nutiPlsId, menuId, targetDate);
             return NoContent();
         }
 
@@ -29,7 +30,7 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         public ActionResult Create([FromBody] NutritionPlanCoreDto<int> dto)
         {
             var id = _nutritionPlanService.Create(dto);
-            return CreatedAtAction(nameof(GetById), new { id = id }, null);
+            return CreatedAtAction(nameof(GetById), new { nutiPlsId = id }, null);
         }
 
         [HttpDelete("{nutiPlsId}")]

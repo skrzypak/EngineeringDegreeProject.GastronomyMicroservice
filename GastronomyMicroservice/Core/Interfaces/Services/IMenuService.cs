@@ -11,10 +11,8 @@ namespace GastronomyMicroservice.Core.Interfaces.Services
     {
         public object Get();
         public object GetById(int menuId);
-        public object GetMenuDishes(int menuId);
-        public object GetMenuAllergens(int menuId);
         public int Create(MenuCoreDto<int> dto);
-        public ICollection<int> SetDishesToMenu(int menuId, ICollection<int> dishesIds); // TODO
+        public ICollection<int> SetDishesToMenu(int menuId, ICollection<DishMealPair<int>> dishMealPairs);
         public void Delete(int menuId);
         public void RemoveDishesFromMenu(int menuId, ICollection<int> dishesIds);
     }

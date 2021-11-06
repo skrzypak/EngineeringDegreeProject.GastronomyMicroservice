@@ -47,20 +47,6 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             return Ok(response);
         }
 
-        [HttpGet("{menuId}/allergen")]
-        public ActionResult<object> GetMenuAllergens([FromRoute] int menuId)
-        {
-            var response = _menuService.GetMenuAllergens(menuId);
-            return Ok(response);
-        }
-
-        [HttpGet("{menuId}/dish")]
-        public ActionResult<object> GetMenuDishes([FromRoute] int menuId)
-        {
-            var response = _menuService.GetMenuDishes(menuId);
-            return Ok(response);
-        }
-
         [HttpDelete("{menuId}/dish")]
         public ActionResult RemoveDishesFromMenu([FromRoute] int menuId, [FromBody] ICollection<int> dishesIds)
         {
@@ -69,9 +55,9 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpPost("{menuId}/dish")]
-        public ActionResult SetDishesToMenu([FromRoute] int menuId, [FromBody] ICollection<int> dishesIds)
+        public ActionResult SetDishesToMenu([FromRoute] int menuId, [FromBody] ICollection<DishMealPair<int>> dishMealPairs)
         {
-            var ids = _menuService.SetDishesToMenu(menuId, dishesIds);
+            var ids = _menuService.SetDishesToMenu(menuId, dishMealPairs);
             return NoContent();
         }
     }
