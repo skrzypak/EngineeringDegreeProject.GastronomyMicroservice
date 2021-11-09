@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace GastronomyMicroservice.Core.Controllers.Single
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api/gastronomy/1.0.0/participants")]
     public class ParticipantController : ControllerBase
     {
         private readonly ILogger<ParticipantController> _logger;

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace GastronomyMicroservice.Core.Controllers.Single
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api/gastronomy/1.0.0/nutrition-groups")]
     public class NutritonGroupController : ControllerBase
     {
         private readonly ILogger<NutritonGroupController> _logger;
@@ -20,7 +20,7 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             _nutritionGroupService = nutritionGroupService;
         }
 
-        [HttpPatch("{nutiGrpId}/plan/{nutriPlsId}")]
+        [HttpPatch("{nutiGrpId}/plans/{nutriPlsId}")]
         public ActionResult SetNutritionPlan([FromRoute] int nutiGrpId, [FromRoute] int nutriPlsId, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             _nutritionGroupService.SetNutritionPlan(nutiGrpId, nutriPlsId, startDate, endDate);
@@ -62,28 +62,28 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             return Ok(response);
         }
 
-        [HttpGet("{nutiGrpId}/plan")]
+        [HttpGet("{nutiGrpId}/plans")]
         public ActionResult<object> GetNutritionPlans([FromRoute] int nutiGrpId, [FromQuery] bool archive)
         {
             var response = _nutritionGroupService.GetNutritionPlans(nutiGrpId, archive);
             return Ok(response);
         }
 
-        [HttpGet("{nutiGrpId}/participant")]
+        [HttpGet("{nutiGrpId}/participants")]
         public ActionResult<object> GetParticipants([FromRoute] int nutiGrpId, [FromQuery] bool archive)
         {
             var response = _nutritionGroupService.GetParticipants(nutiGrpId, archive);
             return Ok(response);
         }
 
-        [HttpDelete("{nutiGrpId}/plan/{nutiPlsId}")]
+        [HttpDelete("{nutiGrpId}/plans/{nutiPlsId}")]
         public ActionResult RemoveNutritionPlan([FromRoute] int nutiGrpId, [FromRoute] int nutiPlsId)
         {
             _nutritionGroupService.RemoveNutritionPlan(nutiGrpId, nutiPlsId);
             return NoContent();
         }
 
-        [HttpDelete("{nutiGrpId}/participant")]
+        [HttpDelete("{nutiGrpId}/participants")]
         public ActionResult RemoveParticipants([FromRoute] int nutiGrpId, [FromBody] ICollection<int> parcsId)
         {
             _nutritionGroupService.RemoveParticipants(nutiGrpId, parcsId);

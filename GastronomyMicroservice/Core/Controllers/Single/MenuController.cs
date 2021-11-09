@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace GastronomyMicroservice.Core.Controllers.Single
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api/gastronomy/1.0.0/menus")]
     public class MenuController : ControllerBase
     {
         private readonly ILogger<MenuController> _logger;
@@ -47,14 +47,14 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             return Ok(response);
         }
 
-        [HttpDelete("{menuId}/dish")]
+        [HttpDelete("{menuId}/dishes")]
         public ActionResult RemoveDishesFromMenu([FromRoute] int menuId, [FromBody] ICollection<int> dishesIds)
         {
             _menuService.RemoveDishesFromMenu(menuId, dishesIds);
             return NoContent();
         }
 
-        [HttpPost("{menuId}/dish")]
+        [HttpPost("{menuId}/dishes")]
         public ActionResult SetDishesToMenu([FromRoute] int menuId, [FromBody] ICollection<DishMealPair<int>> dishMealPairs)
         {
             var ids = _menuService.SetDishesToMenu(menuId, dishMealPairs);

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace GastronomyMicroservice.Core.Controllers.Single
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api/gastronomy/1.0.0/dishes")]
     public class DishController : ControllerBase
     {
         private readonly ILogger<DishController> _logger;
@@ -23,7 +23,7 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             _dishService = dishService;
         }
 
-        [HttpPatch("{dishId}/ingredient/add")]
+        [HttpPatch("{dishId}/ingredients/add")]
         public ActionResult CreateDishIngredients([FromRoute] int dishId, [FromBody] ICollection<IngredientCoreDto> ingredients)
         {
             _dishService.CreateDishIngredients(dishId, ingredients);
@@ -44,14 +44,14 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             return NoContent();
         }
 
-        [HttpPatch("{dishId}/ingredient/remove")]
+        [HttpPatch("{dishId}/ingredients/remove")]
         public ActionResult DeleteDishIngredients([FromRoute] int dishId, [FromBody] ICollection<int> ingredientsIds)
         {
             _dishService.DeleteDishIngredients(dishId, ingredientsIds);
             return NoContent();
         }
 
-        [HttpGet("{dishId}/allergen")]
+        [HttpGet("{dishId}/allergens")]
         public ActionResult<object> GetDishAllergens(int dishId)
         {
             var response = _dishService.GetDishAllergens(dishId);
@@ -72,7 +72,7 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             return Ok(response);
         }
 
-        [HttpGet("{dishId}/ingredient")]
+        [HttpGet("{dishId}/ingredients")]
         public ActionResult<object> GetDishIngredients(int dishId)
         {
             var response = _dishService.GetDishIngredients(dishId);
