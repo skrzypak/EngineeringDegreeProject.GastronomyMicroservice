@@ -10,13 +10,12 @@ using GreenPipes;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Comunication;
 
 namespace GastronomyMicroservice
 {
@@ -48,16 +47,20 @@ namespace GastronomyMicroservice
             });
 
             #region MassTransit
+            var rabbitMq = new RabbitMq();
+            Configuration.GetSection("RabbitMq").Bind(rabbitMq);
+            services.AddSingleton(rabbitMq);
+
             services.AddMassTransit(x =>
             {
                 x.AddConsumer<AllergenConsumer>();
                 x.AddConsumer<ProductConsumer>();
                 x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
                 {
-                    config.Host(new Uri("rabbitmq://localhost"), h =>
+                    config.Host(new Uri(rabbitMq.Host), h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(rabbitMq.Username);
+                        h.Password(rabbitMq.Password);
                     });
 
                     config.ReceiveEndpoint("msgas.allergen.queue", ep =>
@@ -87,7 +90,7 @@ namespace GastronomyMicroservice
             #region swagger
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "GastronomyMicroservice", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "EDP-GASTRONOMY-MSV", Version = "v1" });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = @"JWT Authorization header using the Bearer scheme. 
@@ -133,12 +136,17 @@ namespace GastronomyMicroservice
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GastronomyMicroservice v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EDP-GASTRONOMY-MSV"));
             }
 
-            app.UseMiddleware<IPFilterMiddleware>();
-            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseHttpsRedirection();
+
+            if (env.IsDevelopment() == false)
+            {
+                app.UseMiddleware<IPFilterMiddleware>();
+            }
+
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseRouting();
 
