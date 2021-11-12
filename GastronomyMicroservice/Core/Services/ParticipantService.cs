@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Authentication;
 using AutoMapper;
 using GastronomyMicroservice.Core.Fluent;
 using GastronomyMicroservice.Core.Fluent.Entities;
@@ -14,16 +15,20 @@ namespace GastronomyMicroservice.Core.Services
         private readonly ILogger<ParticipantService> _logger;
         private readonly MicroserviceContext _context;
         private readonly IMapper _mapper;
+        private readonly IHeaderContextService _headerContextService;
 
-        public ParticipantService(ILogger<ParticipantService> logger, MicroserviceContext context, IMapper mapper)
+        public ParticipantService(ILogger<ParticipantService> logger, MicroserviceContext context, IMapper mapper, IHeaderContextService headerContextService)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
+            _headerContextService = headerContextService;
         }
-        public int Create(ParticipantCoreDto<int> dto)
+        public int Create(int enterpriseId, ParticipantCoreDto<int> dto)
         {
             var model = _mapper.Map<ParticipantCoreDto<int>, Participant>(dto);
+            model.EspId = enterpriseId;
+            model.CreatedEudId = _headerContextService.GetEnterpriseUserDomainId(enterpriseId);
 
             _context.Participants.Add(model);
             _context.SaveChanges();
@@ -31,28 +36,30 @@ namespace GastronomyMicroservice.Core.Services
             return model.Id;
         }
 
-        public void Delete(int id)
+        public void Delete(int enterpriseId, int id)
         {
-            var model = new Participant() { Id = id };
+            var model = new Participant() { Id = id, EspId = enterpriseId };
 
             _context.Participants.Attach(model);
             _context.Participants.Remove(model);
             _context.SaveChanges();
         }
 
-        public object Get()
+        public object Get(int enterpriseId)
         {
             var dtos = _context.Participants
                 .AsNoTracking()
+                .Where(p => p.EspId == enterpriseId)
                 .AsEnumerable();
 
             return dtos;
         }
 
-        public object GetById(int id)
+        public object GetById(int enterpriseId, int id)
         {
             var dto = _context.Participants
                 .AsNoTracking()
+                .Where(p => p.EspId == enterpriseId)
                 .Where(p => p.Id == id)
                 .AsEnumerable();
 

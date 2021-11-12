@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace GastronomyMicroservice.Core.Controllers.Single
 {
     [ApiController]
-    [Route("/api/gastronomy/1.0.0/nutrition-plans")]
+    [Route("/api/gastronomy/1.0.0/{enterpriseId}/nutrition-plans")]
     public class NutritonPlanController : ControllerBase
     {
         private readonly ILogger<NutritonPlanController> _logger;
@@ -20,44 +20,44 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpPatch("{nutiPlsId}/menus/{menuId}")]
-        public ActionResult AddMenu([FromRoute] int nutiPlsId, [FromRoute] int menuId, [FromQuery] DateTime targetDate)
+        public ActionResult AddMenu([FromRoute] int enterpriseId, [FromRoute] int nutiPlsId, [FromRoute] int menuId, [FromQuery] DateTime targetDate)
         {
-            _nutritionPlanService.AddMenu(nutiPlsId, menuId, targetDate);
+            _nutritionPlanService.AddMenu(enterpriseId, nutiPlsId, menuId, targetDate);
             return NoContent();
         }
 
         [HttpPost]
-        public ActionResult Create([FromBody] NutritionPlanCoreDto<int> dto)
+        public ActionResult Create([FromRoute] int enterpriseId, [FromBody] NutritionPlanCoreDto<int> dto)
         {
-            var id = _nutritionPlanService.Create(dto);
-            return CreatedAtAction(nameof(GetById), new { nutiPlsId = id }, null);
+            var id = _nutritionPlanService.Create(enterpriseId, dto);
+            return CreatedAtAction(nameof(GetById), new { enterpriseId = enterpriseId, nutiPlsId = id }, null);
         }
 
         [HttpDelete("{nutiPlsId}")]
-        public ActionResult Delete([FromRoute] int nutiPlsId)
+        public ActionResult Delete([FromRoute] int enterpriseId, [FromRoute] int nutiPlsId)
         {
-            _nutritionPlanService.Delete(nutiPlsId);
+            _nutritionPlanService.Delete(enterpriseId, nutiPlsId);
             return NoContent();
         }
 
         [HttpGet]
-        public object Get()
+        public object Get([FromRoute] int enterpriseId)
         {
-            var response = _nutritionPlanService.Get();
+            var response = _nutritionPlanService.Get(enterpriseId);
             return Ok(response);
         }
 
         [HttpGet("{nutiPlsId}")]
-        public object GetById([FromRoute] int nutiPlsId)
+        public object GetById([FromRoute] int enterpriseId, [FromRoute] int nutiPlsId)
         {
-            var response = _nutritionPlanService.GetById(nutiPlsId);
+            var response = _nutritionPlanService.GetById(enterpriseId, nutiPlsId);
             return Ok(response);
         }
 
         [HttpGet("{nutiPlsId}/menus/{menuToPlsId}")]
-        public ActionResult RemoveMenu([FromRoute] int nutiPlsId, [FromRoute] int menuToPlsId)
+        public ActionResult RemoveMenu([FromRoute] int enterpriseId, [FromRoute] int nutiPlsId, [FromRoute] int menuToPlsId)
         {
-            _nutritionPlanService.RemoveMenu(nutiPlsId, menuToPlsId);
+            _nutritionPlanService.RemoveMenu(enterpriseId, nutiPlsId, menuToPlsId);
             return NoContent();
         }
     }

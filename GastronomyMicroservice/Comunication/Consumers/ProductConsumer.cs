@@ -53,18 +53,20 @@ namespace GastronomyMicroservice.Comunication.Consumers
         private void Create(ProductPayloadValue val)
         {
             var model = MapToModel(val);
+            model.CreatedEudId = val.EudId;
             _context.Products.Add(model);
         }
 
         private void Update(ProductPayloadValue val)
         {
             var model = MapToModel(val);
+            model.LastUpdatedEudId = val.EudId;
             _context.Products.Update(model);
         }
 
         private void Delete(ProductPayloadValue val)
         {
-            var model = _context.Products.FirstOrDefault(p => p.Id == val.Id);
+            var model = _context.Products.FirstOrDefault(p => p.EspId == val.EspId && p.Id == val.Id);
             _context.Products.Remove(model);
         }
 
@@ -77,17 +79,40 @@ namespace GastronomyMicroservice.Comunication.Consumers
                 Name = val.Name,
                 Unit = val.Unit,
                 Description = val.Description,
+                EspId = val.EspId,
                 AllergensToProducts = new HashSet<AllergenToProduct>()
             };
 
             foreach(var map in val.Allergens)
             {
-                if (map.Value == CRUD.Create || map.Value == CRUD.Update || map.Value == CRUD.Exists)
+                if (map.Value == CRUD.Create)
                 {
                     model.AllergensToProducts.Add(new AllergenToProduct()
                     {
                         AllergenId = map.Key,
-                        ProductId = model.Id
+                        ProductId = model.Id,
+                        EspId = val.EspId,
+                        CreatedEudId = val.EudId
+                    });
+                }
+
+                if (map.Value == CRUD.Update)
+                {
+                    model.AllergensToProducts.Add(new AllergenToProduct()
+                    {
+                        AllergenId = map.Key,
+                        ProductId = model.Id,
+                        EspId = val.EspId,
+                        LastUpdatedEudId = val.EudId
+                    }); ;
+                }
+
+                if (map.Value == CRUD.Exists)
+                {
+                    model.AllergensToProducts.Add(new AllergenToProduct()
+                    {
+                        AllergenId = map.Key,
+                        ProductId = model.Id,
                     });
                 }
             }

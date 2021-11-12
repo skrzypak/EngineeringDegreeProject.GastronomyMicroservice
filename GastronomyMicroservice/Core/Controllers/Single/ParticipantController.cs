@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace GastronomyMicroservice.Core.Controllers.Single
 {
     [ApiController]
-    [Route("/api/gastronomy/1.0.0/participants")]
+    [Route("/api/gastronomy/1.0.0/{enterpriseId}/participants")]
     public class ParticipantController : ControllerBase
     {
         private readonly ILogger<ParticipantController> _logger;
@@ -19,30 +19,30 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpGet]
-        public ActionResult<object> Get()
+        public ActionResult<object> Get([FromRoute] int enterpriseId)
         {
-            var response = _participantService.Get();
+            var response = _participantService.Get(enterpriseId);
             return Ok(response);
         }
 
         [HttpGet("{id}")]
-        public ActionResult<object> GetById([FromRoute] int id)
+        public ActionResult<object> GetById([FromRoute] int enterpriseId, [FromRoute] int id)
         {
-            var response = _participantService.GetById(id);
+            var response = _participantService.GetById(enterpriseId, id);
             return Ok(response);
         }
 
         [HttpPost]
-        public ActionResult Create([FromBody] ParticipantCoreDto<int> dto)
+        public ActionResult Create([FromRoute] int enterpriseId, [FromBody] ParticipantCoreDto<int> dto)
         {
-            int id = _participantService.Create(dto);
-            return CreatedAtAction(nameof(GetById), new { id = id }, null);
+            int id = _participantService.Create(enterpriseId, dto);
+            return CreatedAtAction(nameof(GetById), new { enterpriseId = enterpriseId, id = id }, null);
         }
 
         [HttpDelete("{id}")]
-        public ActionResult Delete([FromRoute] int id)
+        public ActionResult Delete([FromRoute] int enterpriseId, [FromRoute] int id)
         {
-            _participantService.Delete(id);
+            _participantService.Delete(enterpriseId, id);
             return NoContent();
         }
     }

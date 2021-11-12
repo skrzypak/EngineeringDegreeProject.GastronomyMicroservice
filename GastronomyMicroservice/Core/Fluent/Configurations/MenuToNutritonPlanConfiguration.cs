@@ -13,7 +13,7 @@ namespace GastronomyMicroservice.Core.Fluent.Configurations
         public void Configure(EntityTypeBuilder<MenuToNutritonPlan> modelBuilder)
         {
             modelBuilder.HasKey(a => new { a.Id, a.MenuId, a.NutritionPlanId, a.EspId });
-            modelBuilder.Property(a => a.Id).IsRequired();
+            modelBuilder.Property(a => a.Id).ValueGeneratedNever().IsRequired();
 
             modelBuilder
                .HasOne(m2n => m2n.Menu)

@@ -53,18 +53,20 @@ namespace GastronomyMicroservice.Comunication.Consumers
         private void Create(AllergenPayloadValue val)
         {
             var model = MapToModel(val);
+            model.CreatedEudId = val.EudId;
             _context.Allergens.Add(model);
         }
 
         private void Update(AllergenPayloadValue val)
         {
             var model = MapToModel(val);
+            model.LastUpdatedEudId = val.EudId;
             _context.Allergens.Update(model);
         }
 
         private void Delete(AllergenPayloadValue val)
         {
-            var model = _context.Allergens.FirstOrDefault(p => p.Id == val.Id);
+            var model = _context.Allergens.FirstOrDefault(p => p.EspId == val.EspId && p.Id == val.Id);
             _context.Allergens.Remove(model);
         }
 
@@ -75,7 +77,8 @@ namespace GastronomyMicroservice.Comunication.Consumers
                 Id = val.Id,
                 Code = val.Code,
                 Name = val.Name,
-                Description = val.Description
+                Description = val.Description,
+                EspId = val.EspId
             };
         }
 
