@@ -71,9 +71,9 @@ namespace GastronomyMicroservice.Core.Services
 
         public void Delete(int enterpriseId, int nutiPlsId)
         {
-            var model = new NutritionPlan() { Id = nutiPlsId, EspId = enterpriseId };
+            var model = _context.NutritionPlans
+                       .FirstOrDefault(n => n.Id == nutiPlsId &&  n.EspId == enterpriseId);
 
-            _context.NutritionPlans.Attach(model);
             _context.NutritionPlans.Remove(model);
             _context.SaveChanges();
         }
@@ -144,15 +144,12 @@ namespace GastronomyMicroservice.Core.Services
 
         public void RemoveMenu(int enterpriseId, int nutiPlsId, int menuToPlsId)
         {    
-            var model = new MenuToNutritonPlan()
-            {
-                Id = menuToPlsId,
-                NutritionPlanId = nutiPlsId,
-                EspId = enterpriseId,
-                CreatedEudId = _headerContextService.GetEnterpriseUserDomainId(enterpriseId)
-            };
+            var model = _context.MenusToNutritonPlans
+                .FirstOrDefault(mtm => 
+                    mtm.Id == nutiPlsId &&
+                    mtm.NutritionPlanId == nutiPlsId &&
+                    mtm.EspId == enterpriseId);
 
-            _context.MenusToNutritonPlans.Attach(model);
             _context.MenusToNutritonPlans.Remove(model);
 
             _context.SaveChanges();

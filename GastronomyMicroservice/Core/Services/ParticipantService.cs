@@ -38,9 +38,11 @@ namespace GastronomyMicroservice.Core.Services
 
         public void Delete(int enterpriseId, int id)
         {
-            var model = new Participant() { Id = id, EspId = enterpriseId };
+            var model = _context.Participants
+                .FirstOrDefault(p =>
+                    p.Id == id &&
+                    p.EspId == enterpriseId);
 
-            _context.Participants.Attach(model);
             _context.Participants.Remove(model);
             _context.SaveChanges();
         }

@@ -41,9 +41,9 @@ namespace GastronomyMicroservice.Core.Services
 
         public void Delete(int enterpriseId, int menuId)
         {
-            var model = new Menu() { Id = menuId, EspId = enterpriseId };
+            var model = _context.Menus
+                        .FirstOrDefault(m => m.Id == menuId && m.EspId == enterpriseId);
 
-            _context.Menus.Attach(model);
             _context.Menus.Remove(model);
             _context.SaveChanges();
         }
@@ -83,7 +83,7 @@ namespace GastronomyMicroservice.Core.Services
                     MenuId = d.Id, d.Code, d.Name, d.Description,
                     Value = d.DishsToMenus.Select(dtm => new
                     {
-                        dtm.Meal, dtm.DishId, dtm.Dish.Name, dtm.Dish.Description,
+                        dtm.Meal, menuDishId = dtm.Id, dtm.DishId, dtm.Dish.Name, dtm.Dish.Description,
                         Ingredients = dtm.Dish.Ingredients.Select(i => new
                         {
                             i.ProductId, i.Product.Name, i.Product.Code, i.ValueOfUse, i.Product.Unit
@@ -96,10 +96,10 @@ namespace GastronomyMicroservice.Core.Services
                 }).ToList().GroupBy(dx => new {dx.MenuId, dx.Code, dx.Name, dx.Description}).Select(dxg => new
                 {
                     dxg.Key,
-                    Meals = dxg.SelectMany(g => g.Value.Select(gg => new { gg.Meal, gg.DishId, gg.Name, gg.Description, gg.Ingredients}))
+                    Meals = dxg.SelectMany(g => g.Value.Select(gg => new { gg.Meal, gg.menuDishId, gg.DishId, gg.Name, gg.Description, gg.Ingredients}))
                             .ToList().GroupBy(dxg => new { dxg.Meal }).Select(dxgg => new { 
                                 dxgg.Key,
-                                Dishes = dxgg.Select(g => new { g.DishId, g.Name, g.Description, g.Ingredients  })
+                                Dishes = dxgg.Select(g => new { g.menuDishId, g.DishId, g.Name, g.Description, g.Ingredients  })
                             }),
                     Ingredients = dxg.SelectMany(g => g.Value.SelectMany(gg => gg.Ingredients)).ToList()
                                  .GroupBy(ggg => new { ggg.ProductId, ggg.Code, ggg.Name, ggg.Unit }).Select(gggx  => new { 
@@ -136,17 +136,20 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public void RemoveDishesFromMenu(int enterpriseId, int menuId, ICollection<int> dishesIds)
+        public void RemoveDishesFromMenu(int enterpriseId, int menuId, ICollection<int> menuDishesIds)
         {
-            var model = new DishToMenu() { MenuId = menuId, EspId = enterpriseId };
-
-            using (var enumerator = dishesIds.GetEnumerator())
+            using (var enumerator = menuDishesIds.GetEnumerator())
             {
                 while (enumerator.MoveNext())
                 {
-                    model.DishId = enumerator.Current;
+                    var dtmId = enumerator.Current;
 
-                    _context.DishToMenus.Attach(model);
+                    var model = _context.DishToMenus
+                        .FirstOrDefault(dtm => 
+                            dtm.Id == dtmId &&
+                            dtm.MenuId == menuId &&
+                            dtm.EspId == enterpriseId);
+                    
                     _context.DishToMenus.Remove(model);
                 }
             }

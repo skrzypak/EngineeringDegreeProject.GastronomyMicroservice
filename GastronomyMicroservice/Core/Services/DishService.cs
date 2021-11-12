@@ -61,23 +61,24 @@ namespace GastronomyMicroservice.Core.Services
 
         public void Delete(int enterpriseId, int dishId)
         {
-            var model = new Dish() { Id = dishId, EspId = enterpriseId };
+            var model = _context.Dishes
+                .FirstOrDefault(d => d.Id == dishId && d.EspId == enterpriseId);
 
-            _context.Dishes.Attach(model);
             _context.Dishes.Remove(model);
             _context.SaveChanges();
         }
 
         public void DeleteDishIngredients(int enterpriseId, int dishId, ICollection<int> ingredientsIds)
         {
-            var model = new Ingredient() { DishId = dishId, EspId = enterpriseId };
-
             using(var enumerator = ingredientsIds.GetEnumerator())
             {
                 while(enumerator.MoveNext())
                 {
-                    model.Id = enumerator.Current;
-                    _context.Ingredients.Attach(model);
+                    var ingId = enumerator.Current;
+
+                    var model = _context.Ingredients
+                        .FirstOrDefault(i => i.Id == ingId && i.DishId == dishId && i.EspId == enterpriseId);
+
                     _context.Ingredients.Remove(model);
                 }
             }

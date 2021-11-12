@@ -78,9 +78,9 @@ namespace GastronomyMicroservice.Core.Services
 
         public void Delete(int enterpriseId, int nutiGrpId)
         {
-            var model = new NutritionGroup() { Id = nutiGrpId, EspId = enterpriseId };
+            var model = _context.NutritionGroups
+                       .FirstOrDefault(n => n.Id == nutiGrpId && n.EspId == enterpriseId);
 
-            _context.NutritionGroups.Attach(model);
             _context.NutritionGroups.Remove(model);
             _context.SaveChanges();
         }
@@ -115,7 +115,8 @@ namespace GastronomyMicroservice.Core.Services
                    ng.Id,
                    ng.Name,
                    ng.Description,
-                   Plans = ng.NutritionsGroupsToNutritionsPlans.Select(ngtnp => new { 
+                   Plans = ng.NutritionsGroupsToNutritionsPlans.Select(ngtnp => new {
+                        nutiGrpToNutiPlsId = ngtnp.Id,
                         ngtnp.NutritonPlan.Id,
                         ngtnp.NutritonPlan.Code,
                         ngtnp.NutritonPlan.Description,
@@ -144,11 +145,12 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public void RemoveNutritionPlan(int enterpriseId, int nutiGrpId, int nutiPlsId)
+        public void RemoveNutritionPlan(int enterpriseId, int nutiGrpId, int nutiGrpToNutiPlsId)
         {
-            var model = new NutritionGroupToNutritionPlan() { NutritionGroupId = nutiGrpId, NutritionPlanId = nutiPlsId, EspId = enterpriseId };
 
-            _context.NutritionsGroupsToNutritionsPlans.Attach(model);
+            var model = _context.NutritionsGroupsToNutritionsPlans
+                       .FirstOrDefault(n => n.Id == nutiGrpToNutiPlsId && n.NutritionGroupId == nutiGrpId && n.EspId == enterpriseId);
+
             _context.NutritionsGroupsToNutritionsPlans.Remove(model);
             _context.SaveChanges();
         }

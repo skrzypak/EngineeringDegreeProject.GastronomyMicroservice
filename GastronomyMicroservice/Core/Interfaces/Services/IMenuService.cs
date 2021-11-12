@@ -10,6 +10,6 @@ namespace GastronomyMicroservice.Core.Interfaces.Services
         public int Create(int enterpriseId, MenuCoreDto<int> dto);
         public ICollection<int> SetDishesToMenu(int enterpriseId, int menuId, ICollection<DishMealPair<int>> dishMealPairs);
         public void Delete(int enterpriseId, int menuId);
-        public void RemoveDishesFromMenu(int enterpriseId, int menuId, ICollection<int> dishesIds);
+        public void RemoveDishesFromMenu(int enterpriseId, int menuId, ICollection<int> menuDishesIds);
     }
 }

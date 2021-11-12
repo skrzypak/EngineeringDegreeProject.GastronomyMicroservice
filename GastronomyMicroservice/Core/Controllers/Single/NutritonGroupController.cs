@@ -77,9 +77,9 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpDelete("{nutiGrpId}/plans/{nutiPlsId}")]
-        public ActionResult RemoveNutritionPlan([FromRoute] int enterpriseId, [FromRoute] int nutiGrpId, [FromRoute] int nutiPlsId)
+        public ActionResult RemoveNutritionPlan([FromRoute] int enterpriseId, [FromRoute] int nutiGrpId, [FromRoute] int nutiGrpToNutiPlsId)
         {
-            _nutritionGroupService.RemoveNutritionPlan(enterpriseId, nutiGrpId, nutiPlsId);
+            _nutritionGroupService.RemoveNutritionPlan(enterpriseId, nutiGrpId, nutiGrpToNutiPlsId);
             return NoContent();
         }
 

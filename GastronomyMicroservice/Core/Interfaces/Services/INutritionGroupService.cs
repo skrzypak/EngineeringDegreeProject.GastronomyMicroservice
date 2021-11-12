@@ -14,7 +14,7 @@ namespace GastronomyMicroservice.Core.Interfaces.Services
         public void AddParticipant(int enterpriseId, int nutiGrpId, ICollection<int> parcsIds);
         public void SetNutritionPlan(int enterpriseId, int nutiGrpId, int nutriPlsId, DateTime startDate, DateTime endDate);
         public void Delete(int enterpriseId, int nutiGrpId);
-        public void RemoveNutritionPlan(int enterpriseId, int nutiGrpId,int nutiPlsId);
+        public void RemoveNutritionPlan(int enterpriseId, int nutiGrpId, int nutiGrpToNutiPlsId);
         public void RemoveParticipants(int enterpriseId, int nutiGrpId, ICollection<int> parcsId);
     }
 }

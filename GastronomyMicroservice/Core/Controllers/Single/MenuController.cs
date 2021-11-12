@@ -48,9 +48,9 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpDelete("{menuId}/dishes")]
-        public ActionResult RemoveDishesFromMenu([FromRoute] int enterpriseId, [FromRoute] int menuId, [FromBody] ICollection<int> dishesIds)
+        public ActionResult RemoveDishesFromMenu([FromRoute] int enterpriseId, [FromRoute] int menuId, [FromQuery] ICollection<int> menuDishesIds)
         {
-            _menuService.RemoveDishesFromMenu(enterpriseId, menuId, dishesIds);
+            _menuService.RemoveDishesFromMenu(enterpriseId, menuId, menuDishesIds);
             return NoContent();
         }
 
