@@ -15,5 +15,8 @@ namespace GastronomyMicroservice.Core.Fluent.Entities
         public UnitType Unit { get; set; }
         public virtual ICollection<AllergenToProduct> AllergensToProducts { get; set; }
         public virtual ICollection<Ingredient> Ingredients { get; set; }
+        public int EspId { get; set; }
+        public int CreatedEudId { get; set; }
+        public int? LastUpdatedEudId { get; set; }
     }
 }

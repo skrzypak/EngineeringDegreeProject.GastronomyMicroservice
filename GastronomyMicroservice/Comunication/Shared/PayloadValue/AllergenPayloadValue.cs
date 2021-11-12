@@ -12,5 +12,7 @@ namespace Comunication.Shared.PayloadValue
         public string Code { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int EspId { get; set; }
+        public int EudId { get; set; }
     }
 }

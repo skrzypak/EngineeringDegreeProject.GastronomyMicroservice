@@ -14,5 +14,8 @@ namespace GastronomyMicroservice.Core.Fluent.Entities
         public virtual Dish Dish { get; set; }
         public int MenuId { get; set; }
         public virtual Menu Menu { get; set; }
+        public int EspId { get; set; }
+        public int CreatedEudId { get; set; }
+        public int? LastUpdatedEudId { get; set; }
     }
 }

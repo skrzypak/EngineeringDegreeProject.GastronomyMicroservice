@@ -14,5 +14,8 @@ namespace GastronomyMicroservice.Core.Fluent.Entities
         public virtual NutritionGroup NutritionGroup { get; set; }
         public int ParticipantId { get; set; }
         public virtual Participant Participant { get; set; }
+        public int EspId { get; set; }
+        public int CreatedEudId { get; set; }
+        public int? LastUpdatedEudId { get; set; }
     }
 }

@@ -12,12 +12,30 @@ namespace GastronomyMicroservice.Core.Fluent.Configurations
     {
         public void Configure(EntityTypeBuilder<DishToMenu> modelBuilder)
         {
-            modelBuilder.HasKey(a => a.Id);
+            modelBuilder.HasKey(a => new { a.Id, a.DishId, a.MenuId, a.EspId });
             modelBuilder.Property(a => a.Id).IsRequired();
+
+            modelBuilder
+               .HasOne(d2m => d2m.Dish)
+               .WithMany(d => d.DishsToMenus)
+               .HasForeignKey(dtm => new { dtm.DishId, dtm.EspId })
+               .HasPrincipalKey(d => new { d.Id, d.EspId });
+
+            modelBuilder
+               .HasOne(d2m => d2m.Menu)
+               .WithMany(m => m.DishsToMenus)
+               .HasForeignKey(dtm => new { dtm.MenuId, dtm.EspId })
+               .HasPrincipalKey(m => new { m.Id, m.EspId });
 
             modelBuilder.Property(a => a.Meal).HasConversion<int>().IsRequired();
             modelBuilder.Property(a => a.DishId).IsRequired();
             modelBuilder.Property(a => a.MenuId).IsRequired();
+
+            modelBuilder.Property(a => a.EspId).IsRequired();
+            modelBuilder.Property(a => a.CreatedEudId).IsRequired();
+            modelBuilder.Property(a => a.LastUpdatedEudId).IsRequired(false);
+            modelBuilder.Property<DateTime>("CreatedDate").HasDefaultValue<DateTime>(DateTime.Now).IsRequired();
+            modelBuilder.Property<DateTime?>("LastUpdatedDate").HasDefaultValue<DateTime?>(null).IsRequired(false);
 
             modelBuilder.ToTable("DishesToMenus");
             modelBuilder.Property(a => a.Id).HasColumnName("Id");

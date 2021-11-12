@@ -13,5 +13,8 @@ namespace GastronomyMicroservice.Core.Fluent.Entities
         public string Description { get; set; }
         public string FullName => $"{FirstName} {LastName}";
         public virtual ICollection<NutritionGroupToParticipant> NutritionsGroupsToParticipants { get; set; }
+        public int EspId { get; set; }
+        public int CreatedEudId { get; set; }
+        public int? LastUpdatedEudId { get; set; }
     }
 }
