@@ -1,7 +1,5 @@
-﻿using System;
+﻿using Authentication;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using GastronomyMicroservice.Core.Interfaces.Services;
 using GastronomyMicroservice.Core.Models.Dto.Dish;
 using GastronomyMicroservice.Core.Models.Dto.Ingredient;
@@ -11,71 +9,77 @@ using Microsoft.Extensions.Logging;
 namespace GastronomyMicroservice.Core.Controllers.Single
 {
     [ApiController]
-    [Route("/api/gastronomy/1.0.0/{enterpriseId}/dishes")]
+    [Route("/api/gastronomy/1.0.0/dishes")]
     public class DishController : ControllerBase
     {
         private readonly ILogger<DishController> _logger;
         private readonly IDishService _dishService;
+        private readonly IHeaderContextService _headerContextService;
 
-        public DishController(ILogger<DishController> logger, IDishService dishService)
+        public DishController(ILogger<DishController> logger, IDishService dishService, IHeaderContextService headerContextService)
         {
             _logger = logger;
             _dishService = dishService;
+            _headerContextService = headerContextService;
         }
 
         [HttpPatch("{dishId}/ingredients/add")]
-        public ActionResult CreateDishIngredients([FromRoute] int enterpriseId, [FromRoute] int dishId, [FromBody] ICollection<IngredientCoreDto> ingredients)
+        public ActionResult CreateDishIngredients([FromQuery] int espId, [FromRoute] int dishId, [FromBody] ICollection<IngredientCoreDto> ingredients)
         {
-            _dishService.CreateDishIngredients(enterpriseId, dishId, ingredients);
+            int eudId = _headerContextService.GetEudId();
+            _dishService.CreateDishIngredients(espId, eudId, dishId, ingredients);
             return NoContent();
         }
 
         [HttpPost]
-        public ActionResult<int> Create([FromRoute] int enterpriseId, DishCoreDto<IngredientCoreDto> dto)
+        public ActionResult<int> Create([FromQuery] int espId, DishCoreDto<IngredientCoreDto> dto)
         {
-            var id = _dishService.Create(enterpriseId, dto);
-            return CreatedAtAction(nameof(GetById), new { enterpriseId = enterpriseId, dishId = id }, null);
+            int eudId = _headerContextService.GetEudId();
+            var id = _dishService.Create(espId, eudId, dto);
+            return CreatedAtAction(nameof(GetById), new { espId = espId, dishId = id }, null);
         }
 
         [HttpDelete]
-        public ActionResult Delete([FromRoute] int enterpriseId, int dishId)
+        public ActionResult Delete([FromQuery] int espId, int dishId)
         {
-            _dishService.Delete(enterpriseId, dishId);
+            int eudId = _headerContextService.GetEudId();
+            _dishService.Delete(espId, eudId, dishId);
             return NoContent();
         }
 
         [HttpPatch("{dishId}/ingredients/remove")]
-        public ActionResult DeleteDishIngredients([FromRoute] int enterpriseId, [FromRoute] int dishId, [FromBody] ICollection<int> ingredientsIds)
+        public ActionResult DeleteDishIngredients([FromQuery] int espId, [FromRoute] int dishId, [FromBody] ICollection<int> ingredientsIds)
         {
-            _dishService.DeleteDishIngredients(enterpriseId, dishId, ingredientsIds);
+            int eudId = _headerContextService.GetEudId();
+            _dishService.DeleteDishIngredients(espId, eudId, dishId, ingredientsIds);
             return NoContent();
         }
 
         [HttpGet("{dishId}/allergens")]
-        public ActionResult<object> GetDishAllergens([FromRoute] int enterpriseId, int dishId)
+        public ActionResult<object> GetDishAllergens([FromQuery] int espId, int dishId)
         {
-            var response = _dishService.GetDishAllergens(enterpriseId, dishId);
+            var response = _dishService.GetDishAllergens(espId, dishId);
             return Ok(response);
         }
 
         [HttpGet("{dishId}")]
-        public ActionResult<object> GetById([FromRoute] int enterpriseId, int dishId)
+        public ActionResult<object> GetById([FromQuery] int espId, int dishId)
         {
-            var response = _dishService.GetById(enterpriseId, dishId);
+            var response = _dishService.GetById(espId, dishId);
             return Ok(response);
         }
 
         [HttpGet]
-        public ActionResult<object> Get([FromRoute] int enterpriseId)
+        public ActionResult<object> Get([FromQuery] int espId)
         {
-            var response = _dishService.Get(enterpriseId);
+            var response = _dishService.Get(espId);
             return Ok(response);
         }
 
         [HttpGet("{dishId}/ingredients")]
-        public ActionResult<object> GetDishIngredients([FromRoute] int enterpriseId, int dishId)
+        public ActionResult<object> GetDishIngredients([FromQuery] int espId, int dishId)
         {
-            var response = _dishService.GetDishIngredients(enterpriseId, dishId);
+            var response = _dishService.GetDishIngredients(espId, dishId);
             return Ok(response);
         }
 

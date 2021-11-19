@@ -4,9 +4,9 @@ namespace GastronomyMicroservice.Core.Interfaces.Services
 {
     public interface IParticipantService
     {
-        public object Get(int enterpriseId);
-        public object GetById(int enterpriseId, int id);
-        public int Create(int enterpriseId, ParticipantCoreDto<int> dto);
-        public void Delete(int enterpriseId, int id);
+        public object Get(int espId);
+        public object GetById(int espId, int id);
+        public int Create(int espId, int eudId, ParticipantCoreDto<int> dto);
+        public void Delete(int espId, int eudId, int id);
     }
 }

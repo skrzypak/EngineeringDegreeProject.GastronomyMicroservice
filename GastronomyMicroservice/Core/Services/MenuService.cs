@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Authentication;
 using AutoMapper;
 using GastronomyMicroservice.Core.Exceptions;
 using GastronomyMicroservice.Core.Fluent;
@@ -17,21 +16,19 @@ namespace GastronomyMicroservice.Core.Services
         private readonly ILogger<MenuService> _logger;
         private readonly MicroserviceContext _context;
         private readonly IMapper _mapper;
-        private readonly IHeaderContextService _headerContextService;
 
-        public MenuService(ILogger<MenuService> logger, MicroserviceContext context, IMapper mapper, IHeaderContextService headerContextService)
+        public MenuService(ILogger<MenuService> logger, MicroserviceContext context, IMapper mapper)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
-            _headerContextService = headerContextService;
         }
 
-        public int Create(int enterpriseId, MenuCoreDto<int> dto)
+        public int Create(int espId, int eudId, MenuCoreDto<int> dto)
         {
             var model = _mapper.Map<MenuCoreDto<int>, Menu>(dto);
-            model.EspId = enterpriseId;
-            model.CreatedEudId = _headerContextService.GetEnterpriseUserDomainId(enterpriseId);
+            model.EspId = espId;
+            model.CreatedEudId = eudId;
 
             _context.Menus.Add(model);
             _context.SaveChanges();
@@ -39,20 +36,20 @@ namespace GastronomyMicroservice.Core.Services
             return model.Id;
         }
 
-        public void Delete(int enterpriseId, int menuId)
+        public void Delete(int espId, int eudId, int menuId)
         {
             var model = _context.Menus
-                        .FirstOrDefault(m => m.Id == menuId && m.EspId == enterpriseId);
+                        .FirstOrDefault(m => m.Id == menuId && m.EspId == espId);
 
             _context.Menus.Remove(model);
             _context.SaveChanges();
         }
 
-        public object Get(int enterpriseId)
+        public object Get(int espId)
         {
             var dtos = _context.Menus
                 .AsNoTracking()
-                .Where(m => m.EspId == enterpriseId)
+                .Where(m => m.EspId == espId)
                 .Select(m => new
                 {
                     m.Id,
@@ -71,13 +68,13 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public object GetById(int enterpriseId, int menuId)
+        public object GetById(int espId, int menuId)
         {
             var dto = _context.Menus
                 .AsNoTracking()
                 .Include(m => m.DishsToMenus)
                     .ThenInclude(dtm => dtm.Dish)
-                .Where(m => m.EspId == enterpriseId && m.Id == menuId)
+                .Where(m => m.EspId == espId && m.Id == menuId)
                 .Select(d => new
                 {
                     MenuId = d.Id, d.Code, d.Name, d.Description,
@@ -117,11 +114,11 @@ namespace GastronomyMicroservice.Core.Services
             return dto;
         }
 
-        public object GetDishAllergens(int enterpriseId, int dishId)
+        public object GetDishAllergens(int espId, int dishId)
         {
             var dtos = _context.Ingredients
                 .AsNoTracking()
-                .Where(i => i.EspId == enterpriseId && i.DishId == dishId)
+                .Where(i => i.EspId == espId && i.DishId == dishId)
                 .SelectMany(i => i.Product.AllergensToProducts.Select(atp => new
                     {
                         atp.AllergenId,
@@ -136,7 +133,7 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public void RemoveDishesFromMenu(int enterpriseId, int menuId, ICollection<int> menuDishesIds)
+        public void RemoveDishesFromMenu(int espId, int eudId, int menuId, ICollection<int> menuDishesIds)
         {
             using (var enumerator = menuDishesIds.GetEnumerator())
             {
@@ -148,7 +145,7 @@ namespace GastronomyMicroservice.Core.Services
                         .FirstOrDefault(dtm => 
                             dtm.Id == dtmId &&
                             dtm.MenuId == menuId &&
-                            dtm.EspId == enterpriseId);
+                            dtm.EspId == espId);
                     
                     _context.DishToMenus.Remove(model);
                 }
@@ -157,9 +154,9 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public ICollection<int> SetDishesToMenu(int enterpriseId, int menuId, ICollection<DishMealPair<int>> dishMealPairs)
+        public ICollection<int> SetDishesToMenu(int espId, int eudId, int menuId, ICollection<DishMealPair<int>> dishMealPairs)
         {
-            var model = new DishToMenu() { MenuId = menuId, EspId = enterpriseId };
+            var model = new DishToMenu() { MenuId = menuId, EspId = espId };
             
             var responseIds = new HashSet<int>();
 

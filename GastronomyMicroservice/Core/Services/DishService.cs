@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Authentication;
 using AutoMapper;
 using GastronomyMicroservice.Core.Exceptions;
 using GastronomyMicroservice.Core.Fluent;
@@ -18,19 +17,17 @@ namespace GastronomyMicroservice.Core.Services
         private readonly ILogger<DishService> _logger;
         private readonly MicroserviceContext _context;
         private readonly IMapper _mapper;
-        private readonly IHeaderContextService _headerContextService;
 
-        public DishService(ILogger<DishService> logger, MicroserviceContext context, IMapper mapper, IHeaderContextService headerContextService)
+        public DishService(ILogger<DishService> logger, MicroserviceContext context, IMapper mapper)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
-            _headerContextService = headerContextService;
         }
 
-        public void CreateDishIngredients(int enterpriseId, int dishId, ICollection<IngredientCoreDto> ingredients)
+        public void CreateDishIngredients(int espId, int eudId, int dishId, ICollection<IngredientCoreDto> ingredients)
         {
-            var model = new Ingredient() { DishId = dishId, EspId = enterpriseId };
+            var model = new Ingredient() { DishId = dishId, EspId = espId };
 
             using (var enumerator = ingredients.GetEnumerator())
             {
@@ -47,11 +44,11 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public int Create(int enterpriseId, DishCoreDto<IngredientCoreDto> dto)
+        public int Create(int espId, int eudId, DishCoreDto<IngredientCoreDto> dto)
         {
             var model = _mapper.Map<DishCoreDto<IngredientCoreDto>, Dish>(dto);
-            model.EspId = enterpriseId;
-            model.CreatedEudId = _headerContextService.GetEnterpriseUserDomainId(enterpriseId);
+            model.EspId = espId;
+            model.CreatedEudId = eudId;
 
             _context.Dishes.Add(model);
             _context.SaveChanges();
@@ -59,16 +56,16 @@ namespace GastronomyMicroservice.Core.Services
             return model.Id;
         }
 
-        public void Delete(int enterpriseId, int dishId)
+        public void Delete(int espId, int eudId, int dishId)
         {
             var model = _context.Dishes
-                .FirstOrDefault(d => d.Id == dishId && d.EspId == enterpriseId);
+                .FirstOrDefault(d => d.Id == dishId && d.EspId == espId);
 
             _context.Dishes.Remove(model);
             _context.SaveChanges();
         }
 
-        public void DeleteDishIngredients(int enterpriseId, int dishId, ICollection<int> ingredientsIds)
+        public void DeleteDishIngredients(int espId, int eudId, int dishId, ICollection<int> ingredientsIds)
         {
             using(var enumerator = ingredientsIds.GetEnumerator())
             {
@@ -77,7 +74,7 @@ namespace GastronomyMicroservice.Core.Services
                     var ingId = enumerator.Current;
 
                     var model = _context.Ingredients
-                        .FirstOrDefault(i => i.Id == ingId && i.DishId == dishId && i.EspId == enterpriseId);
+                        .FirstOrDefault(i => i.Id == ingId && i.DishId == dishId && i.EspId == espId);
 
                     _context.Ingredients.Remove(model);
                 }
@@ -86,14 +83,14 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public object GetDishAllergens(int enterpriseId, int dishId)
+        public object GetDishAllergens(int espId, int dishId)
         {
             var dtos = _context.Dishes
                 .AsNoTracking()
                 .Include(d => d.Ingredients)
                     .ThenInclude(i => i.Product)
                         .ThenInclude(p => p.AllergensToProducts)
-                .Where(d => d.EspId == enterpriseId &&  d.Id == dishId)
+                .Where(d => d.EspId == espId &&  d.Id == dishId)
                 .SelectMany(d => d.Ingredients.SelectMany(i => i.Product.AllergensToProducts
                     .Select(atp => new
                     {
@@ -108,14 +105,14 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public object GetById(int enterpriseId, int dishId)
+        public object GetById(int espId, int dishId)
         {
             var dto = _context.Dishes
                  .AsNoTracking()
                  .Include(d => d.Ingredients)
                     .ThenInclude(i => i.Product)
                         .ThenInclude(p => p.AllergensToProducts)
-                 .Where(d => d.EspId == enterpriseId && d.Id == dishId)
+                 .Where(d => d.EspId == espId && d.Id == dishId)
                  .Select(d => new
                  {
                      d.Id,
@@ -149,11 +146,11 @@ namespace GastronomyMicroservice.Core.Services
             return dto;
         }
 
-        public object Get(int enterpriseId)
+        public object Get(int espId)
         {
             var dtos = _context.Dishes
                 .AsNoTracking()
-                .Where(d => d.EspId == enterpriseId)
+                .Where(d => d.EspId == espId)
                 .Select(d => new
                     {
                         d.Id,
@@ -165,12 +162,12 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public object GetDishIngredients(int enterpriseId, int dishId)
+        public object GetDishIngredients(int espId, int dishId)
         {
             var dtos = _context.Dishes
                 .AsNoTracking()
                 .Include(d => d.Ingredients)
-                .Where(d => d.EspId == enterpriseId && d.Id == dishId)
+                .Where(d => d.EspId == espId && d.Id == dishId)
                 .SelectMany(d => d.Ingredients.Select(i => new {
                         i.Product.Id,
                         i.Product.Name,

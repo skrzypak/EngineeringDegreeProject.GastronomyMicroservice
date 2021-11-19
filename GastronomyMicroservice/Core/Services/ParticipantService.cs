@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Authentication;
 using AutoMapper;
 using GastronomyMicroservice.Core.Fluent;
 using GastronomyMicroservice.Core.Fluent.Entities;
@@ -15,20 +14,18 @@ namespace GastronomyMicroservice.Core.Services
         private readonly ILogger<ParticipantService> _logger;
         private readonly MicroserviceContext _context;
         private readonly IMapper _mapper;
-        private readonly IHeaderContextService _headerContextService;
 
-        public ParticipantService(ILogger<ParticipantService> logger, MicroserviceContext context, IMapper mapper, IHeaderContextService headerContextService)
+        public ParticipantService(ILogger<ParticipantService> logger, MicroserviceContext context, IMapper mapper)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
-            _headerContextService = headerContextService;
         }
-        public int Create(int enterpriseId, ParticipantCoreDto<int> dto)
+        public int Create(int espId, int eudId, ParticipantCoreDto<int> dto)
         {
             var model = _mapper.Map<ParticipantCoreDto<int>, Participant>(dto);
-            model.EspId = enterpriseId;
-            model.CreatedEudId = _headerContextService.GetEnterpriseUserDomainId(enterpriseId);
+            model.EspId = espId;
+            model.CreatedEudId = eudId;
 
             _context.Participants.Add(model);
             _context.SaveChanges();
@@ -36,32 +33,32 @@ namespace GastronomyMicroservice.Core.Services
             return model.Id;
         }
 
-        public void Delete(int enterpriseId, int id)
+        public void Delete(int espId, int eudId, int id)
         {
             var model = _context.Participants
                 .FirstOrDefault(p =>
                     p.Id == id &&
-                    p.EspId == enterpriseId);
+                    p.EspId == espId);
 
             _context.Participants.Remove(model);
             _context.SaveChanges();
         }
 
-        public object Get(int enterpriseId)
+        public object Get(int espId)
         {
             var dtos = _context.Participants
                 .AsNoTracking()
-                .Where(p => p.EspId == enterpriseId)
+                .Where(p => p.EspId == espId)
                 .AsEnumerable();
 
             return dtos;
         }
 
-        public object GetById(int enterpriseId, int id)
+        public object GetById(int espId, int id)
         {
             var dto = _context.Participants
                 .AsNoTracking()
-                .Where(p => p.EspId == enterpriseId)
+                .Where(p => p.EspId == espId)
                 .Where(p => p.Id == id)
                 .AsEnumerable();
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Authentication;
 using AutoMapper;
 using GastronomyMicroservice.Core.Exceptions;
 using GastronomyMicroservice.Core.Fluent;
@@ -19,22 +18,20 @@ namespace GastronomyMicroservice.Core.Services
         private readonly MicroserviceContext _context;
         private readonly IMapper _mapper;
         private readonly IMenuService _menuService;
-        private readonly IHeaderContextService _headerContextService;
 
-        public NutritionPlanService(ILogger<NutritionPlanService> logger, MicroserviceContext context, IMapper mapper, IMenuService menuService, IHeaderContextService headerContextService)
+        public NutritionPlanService(ILogger<NutritionPlanService> logger, MicroserviceContext context, IMapper mapper, IMenuService menuService)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
             _menuService = menuService;
-            _headerContextService = headerContextService;
         }
 
-        public int AddMenu(int enterpriseId, int nutiPlsId, int menuId, DateTime targetDate)
+        public int AddMenu(int espId, int eudId, int nutiPlsId, int menuId, DateTime targetDate)
         {
             var mtnp = _context.MenusToNutritonPlans
                 .AsNoTracking()
-                .Where(mtnp => mtnp.EspId == enterpriseId && mtnp.NutritionPlanId == nutiPlsId)
+                .Where(mtnp => mtnp.EspId == espId && mtnp.NutritionPlanId == nutiPlsId)
                 .FirstOrDefault();
 
             if (mtnp is null)
@@ -47,8 +44,8 @@ namespace GastronomyMicroservice.Core.Services
                 NutritionPlanId = nutiPlsId,
                 MenuId = menuId,
                 TargetDate = targetDate.Date,
-                EspId = enterpriseId,
-                CreatedEudId = _headerContextService.GetEnterpriseUserDomainId(enterpriseId)
+                EspId = espId,
+                CreatedEudId = eudId
             };
 
             _context.MenusToNutritonPlans.Add(model);
@@ -57,11 +54,11 @@ namespace GastronomyMicroservice.Core.Services
             return model.Id;
         }
 
-        public int Create(int enterpriseId, NutritionPlanCoreDto<int> dto)
+        public int Create(int espId, int eudId, NutritionPlanCoreDto<int> dto)
         {
             var model = _mapper.Map<NutritionPlanCoreDto<int>, NutritionPlan>(dto);
-            model.EspId = enterpriseId;
-            model.CreatedEudId = _headerContextService.GetEnterpriseUserDomainId(enterpriseId);
+            model.EspId = espId;
+            model.CreatedEudId = eudId;
 
             _context.NutritionPlans.Add(model);
             _context.SaveChanges();
@@ -69,20 +66,20 @@ namespace GastronomyMicroservice.Core.Services
             return model.Id;
         }
 
-        public void Delete(int enterpriseId, int nutiPlsId)
+        public void Delete(int espId, int eudId, int nutiPlsId)
         {
             var model = _context.NutritionPlans
-                       .FirstOrDefault(n => n.Id == nutiPlsId &&  n.EspId == enterpriseId);
+                       .FirstOrDefault(n => n.Id == nutiPlsId &&  n.EspId == espId);
 
             _context.NutritionPlans.Remove(model);
             _context.SaveChanges();
         }
 
-        public object Get(int enterpriseId)
+        public object Get(int espId)
         {
             var dtos = _context.NutritionPlans
                 .AsNoTracking()
-                .Where(np => np.EspId == enterpriseId)
+                .Where(np => np.EspId == espId)
                 .Select(np => new
                 {
                     np.Id,
@@ -100,12 +97,12 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public object GetById(int enterpriseId, int nutiPlsId)
+        public object GetById(int espId, int nutiPlsId)
         {
 
             var info = _context.NutritionPlans
                 .AsNoTracking()
-                .Where(np => np.EspId == enterpriseId && np.Id == nutiPlsId)
+                .Where(np => np.EspId == espId && np.Id == nutiPlsId)
                 .Select(np => new
                 {
                     np.Id,
@@ -125,7 +122,7 @@ namespace GastronomyMicroservice.Core.Services
 
             foreach (var menuInfo in info.Menus)
             {
-                var item = _menuService.GetById(enterpriseId, menuInfo.Id);
+                var item = _menuService.GetById(espId, menuInfo.Id);
                 menus.Add(new { menuInfo.TargetDate, item });
             }
 
@@ -142,13 +139,13 @@ namespace GastronomyMicroservice.Core.Services
             return dto;
         }
 
-        public void RemoveMenu(int enterpriseId, int nutiPlsId, int menuToPlsId)
+        public void RemoveMenu(int espId, int eudId, int nutiPlsId, int menuToPlsId)
         {    
             var model = _context.MenusToNutritonPlans
                 .FirstOrDefault(mtm => 
                     mtm.Id == nutiPlsId &&
                     mtm.NutritionPlanId == nutiPlsId &&
-                    mtm.EspId == enterpriseId);
+                    mtm.EspId == espId);
 
             _context.MenusToNutritonPlans.Remove(model);
 

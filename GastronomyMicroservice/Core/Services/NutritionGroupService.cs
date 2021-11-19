@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Authentication;
 using AutoMapper;
 using GastronomyMicroservice.Core.Fluent;
 using GastronomyMicroservice.Core.Fluent.Entities;
@@ -17,17 +16,15 @@ namespace GastronomyMicroservice.Core.Services
         private readonly ILogger<NutritionGroupService> _logger;
         private readonly MicroserviceContext _context;
         private readonly IMapper _mapper;
-        private readonly IHeaderContextService _headerContextService;
 
-        public NutritionGroupService(ILogger<NutritionGroupService> logger, MicroserviceContext context, IMapper mapper, IHeaderContextService headerContextService)
+        public NutritionGroupService(ILogger<NutritionGroupService> logger, MicroserviceContext context, IMapper mapper)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
-            _headerContextService = headerContextService;
         }
 
-        public void SetNutritionPlan(int enterpriseId, int nutiGrpId, int nutriPlsId, DateTime startDate, DateTime endDate)
+        public void SetNutritionPlan(int espId, int eudId, int nutiGrpId, int nutriPlsId, DateTime startDate, DateTime endDate)
         {
             var model = new NutritionGroupToNutritionPlan()
             {
@@ -35,15 +32,15 @@ namespace GastronomyMicroservice.Core.Services
                 NutritionPlanId = nutriPlsId,
                 StartDate = startDate,
                 EndDate = endDate,
-                EspId = enterpriseId,
-                CreatedEudId = _headerContextService.GetEnterpriseUserDomainId(enterpriseId)
+                EspId = espId,
+                CreatedEudId = eudId
             };
 
             _context.NutritionsGroupsToNutritionsPlans.Add(model);
             _context.SaveChanges();
         }
 
-        public void AddParticipant(int enterpriseId, int nutiGrpId, ICollection<int> parcsIds)
+        public void AddParticipant(int espId, int eudId, int nutiGrpId, ICollection<int> parcsIds)
         {
             var models = new List<NutritionGroupToParticipant>();
 
@@ -55,8 +52,8 @@ namespace GastronomyMicroservice.Core.Services
                     NutritionGroupId = nutiGrpId,
                     ParticipantId = participantId,
                     StartDate = time,
-                    EspId = enterpriseId,
-                    CreatedEudId = _headerContextService.GetEnterpriseUserDomainId(enterpriseId)
+                    EspId = espId,
+                    CreatedEudId = eudId
                 });
             }
 
@@ -64,11 +61,11 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public int Create(int enterpriseId, NutritionGroupCoreDto<int> dto)
+        public int Create(int espId, int eudId, NutritionGroupCoreDto<int> dto)
         {
             var model = _mapper.Map<NutritionGroupCoreDto<int>, NutritionGroup>(dto);
-            model.EspId = enterpriseId;
-            model.CreatedEudId = _headerContextService.GetEnterpriseUserDomainId(enterpriseId);
+            model.EspId = espId;
+            model.CreatedEudId = eudId;
 
             _context.NutritionGroups.AddRange(model);
             _context.SaveChanges();
@@ -76,20 +73,20 @@ namespace GastronomyMicroservice.Core.Services
             return model.Id;
         }
 
-        public void Delete(int enterpriseId, int nutiGrpId)
+        public void Delete(int espId, int eudId, int nutiGrpId)
         {
             var model = _context.NutritionGroups
-                       .FirstOrDefault(n => n.Id == nutiGrpId && n.EspId == enterpriseId);
+                       .FirstOrDefault(n => n.Id == nutiGrpId && n.EspId == espId);
 
             _context.NutritionGroups.Remove(model);
             _context.SaveChanges();
         }
 
-        public object Get(int enterpriseId)
+        public object Get(int espId)
         {
             var dtos = _context.NutritionGroups
                 .AsNoTracking()
-                .Where(n => n.EspId == enterpriseId)
+                .Where(n => n.EspId == espId)
                 .Select(ng => new
                 {
                     ng.Id,
@@ -101,7 +98,7 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public object GetById(int enterpriseId, int nutiGrpId)
+        public object GetById(int espId, int nutiGrpId)
         {
             var time = DateTime.Now;
             var date = time.Date;
@@ -109,7 +106,7 @@ namespace GastronomyMicroservice.Core.Services
             var dtos = _context.NutritionGroups
                .AsNoTracking()
                .Include(ng => ng.NutritionsGroupsToNutritionsPlans)
-               .Where(ng => ng.EspId == enterpriseId && ng.Id == nutiGrpId)
+               .Where(ng => ng.EspId == espId && ng.Id == nutiGrpId)
                .Select(ng => new
                {
                    ng.Id,
@@ -145,20 +142,20 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public void RemoveNutritionPlan(int enterpriseId, int nutiGrpId, int nutiGrpToNutiPlsId)
+        public void RemoveNutritionPlan(int espId, int eudId, int nutiGrpId, int nutiGrpToNutiPlsId)
         {
 
             var model = _context.NutritionsGroupsToNutritionsPlans
-                       .FirstOrDefault(n => n.Id == nutiGrpToNutiPlsId && n.NutritionGroupId == nutiGrpId && n.EspId == enterpriseId);
+                       .FirstOrDefault(n => n.Id == nutiGrpToNutiPlsId && n.NutritionGroupId == nutiGrpId && n.EspId == espId);
 
             _context.NutritionsGroupsToNutritionsPlans.Remove(model);
             _context.SaveChanges();
         }
 
-        public void RemoveParticipants(int enterpriseId, int nutiGrpId, ICollection<int> parcsId)
+        public void RemoveParticipants(int espId, int eudId, int nutiGrpId, ICollection<int> parcsId)
         {
             var models = _context.NutritionGroupsToParticipants
-                .Where(ngtp => ngtp.EspId == enterpriseId && parcsId.Contains(ngtp.ParticipantId))
+                .Where(ngtp => ngtp.EspId == espId && parcsId.Contains(ngtp.ParticipantId))
                 .ToList();
 
             var time = DateTime.Now;
@@ -168,7 +165,7 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public object GetNutritionPlans(int enterpriseId, int nutiGrpId, bool archive)
+        public object GetNutritionPlans(int espId, int nutiGrpId, bool archive)
         {
             var time = DateTime.Now;
             var date = time.Date;
@@ -176,7 +173,7 @@ namespace GastronomyMicroservice.Core.Services
             var dtos = _context.NutritionsGroupsToNutritionsPlans
                .AsNoTracking()
                .Include(ngtnp => ngtnp.NutritonPlan)
-               .Where(ngtnp => ngtnp.EspId == enterpriseId && ngtnp.NutritionGroupId == nutiGrpId)
+               .Where(ngtnp => ngtnp.EspId == espId && ngtnp.NutritionGroupId == nutiGrpId)
                .Select(ngtnp => new
                {
                    ngtnp.NutritonPlan.Id,
@@ -193,7 +190,7 @@ namespace GastronomyMicroservice.Core.Services
             return dtos;
         }
 
-        public object GetParticipants(int enterpriseId, int nutiGrpId, bool archive)
+        public object GetParticipants(int espId, int nutiGrpId, bool archive)
         {
             var time = DateTime.Now;
             var date = time.Date;
@@ -201,7 +198,7 @@ namespace GastronomyMicroservice.Core.Services
             var dtos = _context.NutritionGroupsToParticipants
                .AsNoTracking()
                .Include(ngtp => ngtp.Participant)
-               .Where(ngtp => ngtp.EspId == enterpriseId && ngtp.NutritionGroupId == nutiGrpId)
+               .Where(ngtp => ngtp.EspId == espId && ngtp.NutritionGroupId == nutiGrpId)
                .Select(ngtp => new
                {
                    ngtp.ParticipantId,

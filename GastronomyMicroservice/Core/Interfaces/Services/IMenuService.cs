@@ -5,11 +5,11 @@ namespace GastronomyMicroservice.Core.Interfaces.Services
 {
     public interface IMenuService
     {
-        public object Get(int enterpriseId);
-        public object GetById(int enterpriseId, int menuId);
-        public int Create(int enterpriseId, MenuCoreDto<int> dto);
-        public ICollection<int> SetDishesToMenu(int enterpriseId, int menuId, ICollection<DishMealPair<int>> dishMealPairs);
-        public void Delete(int enterpriseId, int menuId);
-        public void RemoveDishesFromMenu(int enterpriseId, int menuId, ICollection<int> menuDishesIds);
+        public object Get(int espId);
+        public object GetById(int espId, int menuId);
+        public int Create(int espId, int eudId, MenuCoreDto<int> dto);
+        public ICollection<int> SetDishesToMenu(int espId, int eudId, int menuId, ICollection<DishMealPair<int>> dishMealPairs);
+        public void Delete(int espId, int eudId, int menuId);
+        public void RemoveDishesFromMenu(int espId, int eudId, int menuId, ICollection<int> menuDishesIds);
     }
 }
