@@ -39,8 +39,8 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             return CreatedAtAction(nameof(GetById), new { espId = espId, dishId = id }, null);
         }
 
-        [HttpDelete]
-        public ActionResult Delete([FromQuery] int espId, int dishId)
+        [HttpDelete("{dishId}")]
+        public ActionResult Delete([FromQuery] int espId, [FromRoute] int dishId)
         {
             int eudId = _headerContextService.GetEudId();
             _dishService.Delete(espId, eudId, dishId);

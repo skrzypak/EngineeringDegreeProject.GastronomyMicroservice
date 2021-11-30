@@ -137,7 +137,7 @@ namespace GastronomyMicroservice.Core.Services
                    .OrderByDescending(px => px.LastName).ThenBy(px => px.FirstName)
                    .Take(5)
                })
-               .AsEnumerable();
+               .FirstOrDefault();
 
             return dtos;
         }

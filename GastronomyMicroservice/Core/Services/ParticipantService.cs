@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using AutoMapper;
+using GastronomyMicroservice.Core.Exceptions;
 using GastronomyMicroservice.Core.Fluent;
 using GastronomyMicroservice.Core.Fluent.Entities;
 using GastronomyMicroservice.Core.Interfaces.Services;
@@ -49,6 +50,14 @@ namespace GastronomyMicroservice.Core.Services
             var dtos = _context.Participants
                 .AsNoTracking()
                 .Where(p => p.EspId == espId)
+				.Select(p => new
+                {
+                    p.Id,
+                    p.FirstName,
+                    p.LastName,
+                    p.Description,
+                    p.FullName
+                })
                 .AsEnumerable();
 
             return dtos;
@@ -58,9 +67,34 @@ namespace GastronomyMicroservice.Core.Services
         {
             var dto = _context.Participants
                 .AsNoTracking()
+                .Include(p => p.NutritionsGroupsToParticipants)
+                    .ThenInclude(n2p => n2p.NutritionGroup)
                 .Where(p => p.EspId == espId)
                 .Where(p => p.Id == id)
-                .AsEnumerable();
+                .Select(p => new
+                {
+                    p.Id,
+                    p.FirstName,
+                    p.LastName,
+                    p.Description,
+                    p.FullName,
+                    nutritionGroups = p.NutritionsGroupsToParticipants.Select(n2p => new
+                    {
+                        id = n2p.NutritionGroupId,
+                        n2p.NutritionGroup.Name,
+                        n2p.NutritionGroup.Description,
+                        startDate = n2p.StartDate,
+                        endDate = n2p.EndDate
+                    })
+                    .OrderByDescending(n2px => n2px.startDate)
+                    .ToList()
+                })
+                .FirstOrDefault();
+
+            if(dto is null)
+            {
+                throw new NotFoundException($"Participant with ID {id} NOT FOUND in enterprsie with ID {espId}");
+            }
 
             return dto;
         }

@@ -136,7 +136,7 @@ namespace GastronomyMicroservice.Core.Services
                         })
                     ).AsEnumerable()
                  })
-                 .AsEnumerable();
+                 .FirstOrDefault();
 
             if(dto is null)
             {
