@@ -124,7 +124,8 @@ namespace GastronomyMicroservice.Core.Services
                          i.ProductId,
                          i.Product.Name,
                          i.Product.Code,
-                         i.ValueOfUse
+                         i.ValueOfUse,
+                         i.Product.Unit
                      }).AsEnumerable(),
                      Allergens = d.Ingredients.AsEnumerable().SelectMany(i => i.Product.AllergensToProducts
                         .Select(atp => new

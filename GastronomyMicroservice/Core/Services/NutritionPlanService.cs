@@ -87,7 +87,7 @@ namespace GastronomyMicroservice.Core.Services
                     np.Name,
                     np.Description
                 })
-                .FirstOrDefault();
+                .ToList();
 
             if (dtos is null)
             {
