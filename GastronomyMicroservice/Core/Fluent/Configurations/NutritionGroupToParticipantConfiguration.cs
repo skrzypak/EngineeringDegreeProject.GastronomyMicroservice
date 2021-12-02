@@ -15,6 +15,9 @@ namespace GastronomyMicroservice.Core.Fluent.Configurations
             modelBuilder.HasKey(a => new { a.Id, a.NutritionGroupId, a.ParticipantId, a.EspId });
             modelBuilder.Property(a => a.Id).ValueGeneratedOnAdd().IsRequired();
 
+            modelBuilder.Property(a => a.NutritionGroupId).IsRequired();
+            modelBuilder.Property(a => a.ParticipantId).IsRequired();
+
             modelBuilder
               .HasOne(n2p => n2p.NutritionGroup)
               .WithMany(n => n.NutritionsGroupsToParticipants)

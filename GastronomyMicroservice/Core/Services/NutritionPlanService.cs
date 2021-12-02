@@ -109,7 +109,7 @@ namespace GastronomyMicroservice.Core.Services
                     np.Code,
                     np.Name,
                     np.Description,
-                    Menus = np.MenusToNutritonsPlans.Select(m => new { m.Id, TargetDate = m.TargetDate.Date }).ToList()
+                    Menus = np.MenusToNutritonsPlans.Select(m => new { m.Id, m.MenuId, TargetDate = m.TargetDate.Date }).ToList()
                 })
                 .FirstOrDefault();
 
@@ -122,7 +122,7 @@ namespace GastronomyMicroservice.Core.Services
 
             foreach (var menuInfo in info.Menus)
             {
-                var item = _menuService.GetById(espId, menuInfo.Id);
+                var item = _menuService.GetById(espId, menuInfo.MenuId);
                 menus.Add(new { menuInfo.TargetDate, item });
             }
 

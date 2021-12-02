@@ -25,7 +25,7 @@ namespace GastronomyMicroservice.Core.Fluent.Configurations
               .HasPrincipalKey(n => new { n.Id, n.EspId });
 
             modelBuilder
-              .HasOne(n2n => n2n.NutritonPlan)
+              .HasOne(n2n => n2n.NutritionPlan)
               .WithMany(n => n.NutritionsGroupsToNutritionsPlans)
               .HasForeignKey(n2n => new { n2n.NutritionPlanId, n2n.EspId })
               .HasPrincipalKey(n => new { n.Id, n.EspId });

@@ -13,7 +13,7 @@ namespace GastronomyMicroservice.Core.Fluent.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public virtual NutritionGroup NutritionGroup { get; set; }
-        public virtual NutritionPlan NutritonPlan { get; set; }
+        public virtual NutritionPlan NutritionPlan { get; set; }
         public int EspId { get; set; }
         public int CreatedEudId { get; set; }
         public int? LastUpdatedEudId { get; set; }

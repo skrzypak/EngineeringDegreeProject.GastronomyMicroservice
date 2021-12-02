@@ -61,9 +61,9 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public int Create(int espId, int eudId, NutritionGroupCoreDto<int> dto)
+        public int Create(int espId, int eudId, NutritionGroupCoreDto<int, int> dto)
         {
-            var model = _mapper.Map<NutritionGroupCoreDto<int>, NutritionGroup>(dto);
+            var model = _mapper.Map<NutritionGroupCoreDto<int, int>, NutritionGroup>(dto);
             model.EspId = espId;
             model.CreatedEudId = eudId;
 
@@ -112,18 +112,20 @@ namespace GastronomyMicroservice.Core.Services
                    ng.Id,
                    ng.Name,
                    ng.Description,
-                   Plans = ng.NutritionsGroupsToNutritionsPlans.Select(ngtnp => new {
-                        nutiGrpToNutiPlsId = ngtnp.Id,
-                        ngtnp.NutritonPlan.Id,
-                        ngtnp.NutritonPlan.Code,
-                        ngtnp.NutritonPlan.Description,
-                        ngtnp.StartDate,
-                        ngtnp.EndDate,
-                   })
-                   .AsEnumerable()
-                   .Where(px => px.EndDate.Date >= date)
-                   .OrderByDescending(px => px.StartDate).ThenBy(px => px.EndDate)
-                   .Take(5),
+                   //Plans = ng.NutritionsGroupsToNutritionsPlans.Select(ngtnp => new
+                   //{
+                   //    ngtnp.Id,
+                   //    ngtnp.NutritionPlanId,
+                   //    ngtnp.NutritionPlan.Code,
+                   //    ngtnp.NutritionPlan.Name,
+                   //    ngtnp.NutritionPlan.Description,
+                   //    ngtnp.StartDate,
+                   //    ngtnp.EndDate
+                   //})
+                   //.AsEnumerable()
+                   //.Where(px => px.EndDate.Date >= date)
+                   //.OrderByDescending(px => px.StartDate).ThenBy(px => px.EndDate)
+                   //.Take(5),
                    Participants = ng.NutritionsGroupsToParticipants.Select(ngtp => new { 
                         ngtp.Participant.Id,
                         ngtp.Participant.FirstName,
@@ -172,14 +174,14 @@ namespace GastronomyMicroservice.Core.Services
 
             var dtos = _context.NutritionsGroupsToNutritionsPlans
                .AsNoTracking()
-               .Include(ngtnp => ngtnp.NutritonPlan)
+               .Include(ngtnp => ngtnp.NutritionPlan)
                .Where(ngtnp => ngtnp.EspId == espId && ngtnp.NutritionGroupId == nutiGrpId)
                .Select(ngtnp => new
                {
-                   ngtnp.NutritonPlan.Id,
-                   ngtnp.NutritonPlan.Code,
-                   ngtnp.NutritonPlan.Name,
-                   ngtnp.NutritonPlan.Description,
+                   ngtnp.NutritionPlan.Id,
+                   ngtnp.NutritionPlan.Code,
+                   ngtnp.NutritionPlan.Name,
+                   ngtnp.NutritionPlan.Description,
                    ngtnp.StartDate,
                    ngtnp.EndDate
                })

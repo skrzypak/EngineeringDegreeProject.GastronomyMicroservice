@@ -40,7 +40,7 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpPost]
-        public ActionResult Create([FromQuery] int espId, [FromBody] NutritionGroupCoreDto<int> dto)
+        public ActionResult Create([FromQuery] int espId, [FromBody] NutritionGroupCoreDto<int, int> dto)
         {
             int eudId = _headerContextService.GetEudId();
             var id = _nutritionGroupService.Create(espId, eudId, dto);

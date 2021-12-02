@@ -70,10 +70,12 @@ namespace GastronomyMicroservice.Core.Mappers.AutoMapper
                     }
                 });
 
-            CreateMap<NutritionGroupCoreDto<int>, NutritionGroup>()
+            CreateMap<NutritionGroupCoreDto<int, int>, NutritionGroup>()
                 .ForMember(dest => dest.NutritionsGroupsToParticipants, opt => opt.Ignore())
+                .ForMember(dest => dest.NutritionsGroupsToNutritionsPlans, opt => opt.Ignore())
                 .AfterMap((src, dest) => {
                     dest.NutritionsGroupsToParticipants = new HashSet<NutritionGroupToParticipant>();
+                    dest.NutritionsGroupsToNutritionsPlans = new HashSet<NutritionGroupToNutritionPlan>();
 
                     using (var enumerator = src.Participants.GetEnumerator())
                     {
@@ -82,6 +84,18 @@ namespace GastronomyMicroservice.Core.Mappers.AutoMapper
                             dest.NutritionsGroupsToParticipants.Add(new NutritionGroupToParticipant()
                             {
                                 NutritionGroupId = enumerator.Current,
+                                StartDate = System.DateTime.Now
+                            });
+                        }
+                    }
+
+                    using (var enumerator = src.Plans.GetEnumerator())
+                    {
+                        while (enumerator.MoveNext())
+                        {
+                            dest.NutritionsGroupsToNutritionsPlans.Add(new NutritionGroupToNutritionPlan()
+                            {
+                                NutritionPlanId = enumerator.Current,
                                 StartDate = System.DateTime.Now
                             });
                         }
