@@ -8,7 +8,7 @@ namespace GastronomyMicroservice.Core.Fluent.Entities
     public class MenuToNutritonPlan : IEntity
     {
         public int Id { get; set; }
-        public DateTime TargetDate { get; set; }
+        public uint Order { get; set; }
         public int MenuId { get; set; }
         public virtual Menu Menu { get; set; }
         public int NutritionPlanId { get; set; }

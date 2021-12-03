@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using GastronomyMicroservice.Core.Exceptions;
 using GastronomyMicroservice.Core.Fluent;
 using GastronomyMicroservice.Core.Fluent.Entities;
 using GastronomyMicroservice.Core.Interfaces.Services;
@@ -103,7 +104,7 @@ namespace GastronomyMicroservice.Core.Services
             var time = DateTime.Now;
             var date = time.Date;
 
-            var dtos = _context.NutritionGroups
+            var dto = _context.NutritionGroups
                .AsNoTracking()
                .Include(ng => ng.NutritionsGroupsToNutritionsPlans)
                .Where(ng => ng.EspId == espId && ng.Id == nutiGrpId)
@@ -112,36 +113,39 @@ namespace GastronomyMicroservice.Core.Services
                    ng.Id,
                    ng.Name,
                    ng.Description,
-                   //Plans = ng.NutritionsGroupsToNutritionsPlans.Select(ngtnp => new
-                   //{
-                   //    ngtnp.Id,
-                   //    ngtnp.NutritionPlanId,
-                   //    ngtnp.NutritionPlan.Code,
-                   //    ngtnp.NutritionPlan.Name,
-                   //    ngtnp.NutritionPlan.Description,
-                   //    ngtnp.StartDate,
-                   //    ngtnp.EndDate
-                   //})
-                   //.AsEnumerable()
-                   //.Where(px => px.EndDate.Date >= date)
-                   //.OrderByDescending(px => px.StartDate).ThenBy(px => px.EndDate)
-                   //.Take(5),
-                   Participants = ng.NutritionsGroupsToParticipants.Select(ngtp => new { 
-                        ngtp.Participant.Id,
-                        ngtp.Participant.FirstName,
-                        ngtp.Participant.LastName,
-                        ngtp.Participant.FullName,
-                        ngtp.StartDate,
-                        ngtp.EndDate
-                   })
-                   .AsEnumerable()
-                   .Where(ngtpx => ngtpx.EndDate == null)
-                   .OrderByDescending(px => px.LastName).ThenBy(px => px.FirstName)
-                   .Take(5)
                })
                .FirstOrDefault();
 
-            return dtos;
+            if (dto is null)
+            {
+                throw new NotFoundException($"Nutrtion group with id {nutiGrpId} NOT FOUND");
+            }
+
+            object nutritionPlans = null, participants = null;
+
+            try
+            {
+                nutritionPlans = this.GetNutritionPlans(espId, nutiGrpId, false);
+            } catch(Exception) {
+                nutritionPlans = new List<object>();
+            }
+
+            try
+            {
+                participants = this.GetParticipants(espId, nutiGrpId, false);
+            }
+            catch (Exception) {
+                participants = new List<object>();
+            }
+
+            return new
+            {
+                dto.Id,
+                dto.Name,
+                dto.Description,
+                nutritionPlans,
+                participants,
+            };
         }
 
         public void RemoveNutritionPlan(int espId, int eudId, int nutiGrpId, int nutiGrpToNutiPlsId)
@@ -169,7 +173,8 @@ namespace GastronomyMicroservice.Core.Services
 
         public object GetNutritionPlans(int espId, int nutiGrpId, bool archive)
         {
-            var time = DateTime.Now;
+            DateTime time = !archive ? DateTime.Now : DateTime.MinValue;
+
             var date = time.Date;
 
             var dtos = _context.NutritionsGroupsToNutritionsPlans
@@ -194,7 +199,8 @@ namespace GastronomyMicroservice.Core.Services
 
         public object GetParticipants(int espId, int nutiGrpId, bool archive)
         {
-            var time = DateTime.Now;
+            DateTime time = !archive ? DateTime.Now : DateTime.MinValue;
+
             var date = time.Date;
 
             var dtos = _context.NutritionGroupsToParticipants

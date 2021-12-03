@@ -95,8 +95,9 @@ namespace GastronomyMicroservice.Core.Mappers.AutoMapper
                         {
                             dest.NutritionsGroupsToNutritionsPlans.Add(new NutritionGroupToNutritionPlan()
                             {
-                                NutritionPlanId = enumerator.Current,
-                                StartDate = System.DateTime.Now
+                                NutritionPlanId = enumerator.Current.NutritionPlanId,
+                                StartDate = enumerator.Current.StartDate,
+                                EndDate = enumerator.Current.EndDate,
                             });
                         }
                     }
@@ -104,7 +105,9 @@ namespace GastronomyMicroservice.Core.Mappers.AutoMapper
 
             CreateMap<NutritionPlanCoreDto<int>, NutritionPlan>()
                 .ForMember(dest => dest.NutritionsGroupsToNutritionsPlans, opt => opt.Ignore())
+                .ForMember(dest => dest.MenusToNutritonsPlans, opt => opt.Ignore())
                 .AfterMap((src, dest) => {
+                    dest.NutritionsGroupsToNutritionsPlans = new HashSet<NutritionGroupToNutritionPlan>();
                     dest.MenusToNutritonsPlans = new HashSet<MenuToNutritonPlan>();
 
                     using (var enumerator = src.Menus.GetEnumerator())
@@ -114,7 +117,7 @@ namespace GastronomyMicroservice.Core.Mappers.AutoMapper
                             dest.MenusToNutritonsPlans.Add(new MenuToNutritonPlan()
                             {
                                 MenuId = enumerator.Current.Menu,
-                                TargetDate = enumerator.Current.TargetDate
+                                Order = enumerator.Current.Order
                             });
                         }
                     }

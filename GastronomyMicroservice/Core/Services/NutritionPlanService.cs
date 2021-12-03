@@ -27,23 +27,33 @@ namespace GastronomyMicroservice.Core.Services
             _menuService = menuService;
         }
 
-        public int AddMenu(int espId, int eudId, int nutiPlsId, int menuId, DateTime targetDate)
+        public int AddMenu(int espId, int eudId, int nutiPlsId, int menuId, uint order)
         {
-            var mtnp = _context.MenusToNutritonPlans
+            var np = _context.NutritionPlans
                 .AsNoTracking()
-                .Where(mtnp => mtnp.EspId == espId && mtnp.NutritionPlanId == nutiPlsId)
+                .Where(n => n.EspId == espId && n.Id == nutiPlsId)
                 .FirstOrDefault();
 
-            if (mtnp is null)
+            if (np is null)
             {
                 throw new NotFoundException($"Nutriton plan with id {nutiPlsId} NOT FOUND");
+            }
+
+            var m = _context.Menus
+                .AsNoTracking()
+                .Where(m => m.EspId == espId && m.Id == menuId)
+                .FirstOrDefault();
+
+            if (m is null)
+            {
+                throw new NotFoundException($"Menu with id {menuId} NOT FOUND");
             }
 
             var model = new MenuToNutritonPlan()
             {
                 NutritionPlanId = nutiPlsId,
                 MenuId = menuId,
-                TargetDate = targetDate.Date,
+                Order = order,
                 EspId = espId,
                 CreatedEudId = eudId
             };
@@ -100,7 +110,7 @@ namespace GastronomyMicroservice.Core.Services
         public object GetById(int espId, int nutiPlsId)
         {
 
-            var info = _context.NutritionPlans
+            var dto = _context.NutritionPlans
                 .AsNoTracking()
                 .Where(np => np.EspId == espId && np.Id == nutiPlsId)
                 .Select(np => new
@@ -109,32 +119,16 @@ namespace GastronomyMicroservice.Core.Services
                     np.Code,
                     np.Name,
                     np.Description,
-                    Menus = np.MenusToNutritonsPlans.Select(m => new { m.Id, m.MenuId, TargetDate = m.TargetDate.Date }).ToList()
+                    Menus = np.MenusToNutritonsPlans.Select(m => new { m.Id, m.MenuId, m.Order, m.Menu.Code, m.Menu.Name, m.Menu.Description })
+                    .OrderBy(mx => mx.Order)
+                    .ToList()
                 })
                 .FirstOrDefault();
 
-            if (info is null)
+            if (dto is null)
             {
                 throw new NotFoundException($"Nutriton plan with id {nutiPlsId} NOT FOUND");
             }
-
-            ICollection<object> menus = new List<object>();
-
-            foreach (var menuInfo in info.Menus)
-            {
-                var item = _menuService.GetById(espId, menuInfo.MenuId);
-                menus.Add(new { menuInfo.TargetDate, item });
-            }
-
-            var dto = new {
-                Key = new {
-                    info.Id,
-                    info.Code,
-                    info.Name,
-                    info.Description
-                },
-                Value = menus
-            };
 
             return dto;
         }

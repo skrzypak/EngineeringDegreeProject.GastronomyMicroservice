@@ -14,6 +14,6 @@ namespace GastronomyMicroservice.Core.Models.Dto.NutritionPlan
     public class MenuDatePair<TM>
     {
         public TM Menu { get; set; }
-        public DateTime TargetDate { get; set; }
+        public uint Order { get; set; }
     }
 }

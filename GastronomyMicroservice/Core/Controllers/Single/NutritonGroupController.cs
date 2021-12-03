@@ -31,7 +31,7 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             return NoContent();
         }
 
-        [HttpPatch("{nutiGrpId}")]
+        [HttpPatch("{nutiGrpId}/participants")]
         public ActionResult AddParticipants([FromQuery] int espId, [FromRoute] int nutiGrpId, [FromBody] ICollection<int> parcsIds)
         {
             int eudId = _headerContextService.GetEudId();
@@ -83,7 +83,7 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             return Ok(response);
         }
 
-        [HttpDelete("{nutiGrpId}/plans/{nutiPlsId}")]
+        [HttpDelete("{nutiGrpId}/plans/{nutiGrpToNutiPlsId}")]
         public ActionResult RemoveNutritionPlan([FromQuery] int espId, [FromRoute] int nutiGrpId, [FromRoute] int nutiGrpToNutiPlsId)
         {
             int eudId = _headerContextService.GetEudId();

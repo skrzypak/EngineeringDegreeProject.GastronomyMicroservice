@@ -27,7 +27,7 @@ namespace GastronomyMicroservice.Core.Fluent.Configurations
               .HasForeignKey(m2n => new { m2n.NutritionPlanId, m2n.EspId })
               .HasPrincipalKey(d => new { d.Id, d.EspId });
 
-            modelBuilder.Property(a => a.TargetDate).IsRequired();
+            modelBuilder.Property(a => a.Order).IsRequired();
             modelBuilder.Property(a => a.MenuId).IsRequired();
             modelBuilder.Property(a => a.NutritionPlanId).IsRequired();
 
@@ -39,7 +39,7 @@ namespace GastronomyMicroservice.Core.Fluent.Configurations
 
             modelBuilder.ToTable("MenusToNutritonPlans");
             modelBuilder.Property(a => a.Id).HasColumnName("Id");
-            modelBuilder.Property(a => a.TargetDate).HasColumnName("TargetDate");
+            modelBuilder.Property(a => a.Order).HasColumnName("Order");
             modelBuilder.Property(a => a.MenuId).HasColumnName("MenuId");
             modelBuilder.Property(a => a.NutritionPlanId).HasColumnName("NutritionPlanId");
         }

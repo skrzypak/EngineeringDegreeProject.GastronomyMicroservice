@@ -23,10 +23,10 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpPatch("{nutiPlsId}/menus/{menuId}")]
-        public ActionResult AddMenu([FromQuery] int espId, [FromRoute] int nutiPlsId, [FromRoute] int menuId, [FromQuery] DateTime targetDate)
+        public ActionResult AddMenu([FromQuery] int espId, [FromRoute] int nutiPlsId, [FromRoute] int menuId, [FromQuery] uint order)
         {
             int eudId = _headerContextService.GetEudId();
-            _nutritionPlanService.AddMenu(espId, eudId, nutiPlsId, menuId, targetDate);
+            _nutritionPlanService.AddMenu(espId, eudId, nutiPlsId, menuId, order);
             return NoContent();
         }
 
