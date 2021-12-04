@@ -83,8 +83,9 @@ namespace GastronomyMicroservice.Core.Mappers.AutoMapper
                         {
                             dest.NutritionsGroupsToParticipants.Add(new NutritionGroupToParticipant()
                             {
-                                NutritionGroupId = enumerator.Current,
-                                StartDate = System.DateTime.Now
+                                ParticipantId = enumerator.Current.ParticipantId,
+                                StartDate = enumerator.Current.StartDate,
+                                EndDate = enumerator.Current.EndDate,
                             });
                         }
                     }

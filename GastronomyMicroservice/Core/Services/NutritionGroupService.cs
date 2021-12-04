@@ -187,12 +187,14 @@ namespace GastronomyMicroservice.Core.Services
                    ngtnp.NutritionPlan.Code,
                    ngtnp.NutritionPlan.Name,
                    ngtnp.NutritionPlan.Description,
-                   ngtnp.StartDate,
-                   ngtnp.EndDate
+                   StartDate = ngtnp.StartDate.ToString("dd/MM/yyyy"),
+                   EndDate = ngtnp.EndDate.Date.ToString("dd/MM/yyyy"),
+                   sdc = ngtnp.StartDate.Date,
+                   edc = ngtnp.EndDate.Date
                })
                .AsEnumerable()
-               .Where(px => px.EndDate.Date >= date)
-               .OrderByDescending(px => px.StartDate).ThenBy(px => px.EndDate);
+               .Where(px => px.edc >= date)
+               .OrderByDescending(px => px.sdc).ThenBy(px => px.edc);
 
             return dtos;
         }
@@ -214,11 +216,13 @@ namespace GastronomyMicroservice.Core.Services
                    ngtp.Participant.LastName,
                    ngtp.Participant.FullName,
                    ngtp.Participant.Description,
-                   ngtp.StartDate,
-                   ngtp.EndDate
+                   StartDate = ngtp.StartDate.ToString("dd/MM/yyyy"),
+                   EndDate = ngtp.EndDate == null ? null : ngtp.EndDate.Value.Date.ToString("dd/MM/yyyy"),
+                   sdc = ngtp.StartDate.Date,
+                   edc = ngtp.EndDate
                })
                .AsEnumerable()
-               .Where(px => px.EndDate == null)
+               .Where(px => (px.edc == null && !archive) || px.edc >= date)
                .OrderByDescending(px => px.LastName).ThenBy(px => px.FirstName);
 
             return dtos;
