@@ -211,7 +211,7 @@ namespace GastronomyMicroservice.Core.Services
                .Where(ngtp => ngtp.EspId == espId && ngtp.NutritionGroupId == nutiGrpId)
                .Select(ngtp => new
                {
-                   ngtp.ParticipantId,
+                   id = ngtp.ParticipantId,
                    ngtp.Participant.FirstName,
                    ngtp.Participant.LastName,
                    ngtp.Participant.FullName,
