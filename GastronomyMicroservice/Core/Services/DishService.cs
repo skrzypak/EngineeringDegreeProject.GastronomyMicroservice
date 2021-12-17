@@ -73,6 +73,7 @@ namespace GastronomyMicroservice.Core.Services
             model.Name = item.Name;
             model.Description = item.Description;
             model.Ingredients = item.Ingredients;
+            model.LastUpdatedEudId = eudId;
 
             _context.SaveChanges();
         }

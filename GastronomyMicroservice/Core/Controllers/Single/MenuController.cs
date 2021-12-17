@@ -30,6 +30,14 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             return CreatedAtAction(nameof(GetById), new { espId = espId, menuId = id }, null);
         }
 
+        [HttpPut("{menuId}")]
+        public ActionResult Create([FromQuery] int espId, [FromRoute] int menuId, [FromBody] MenuCoreDto<int> dto)
+        {
+            int eudId = _headerContextService.GetEudId();
+            _menuService.Update(espId, eudId, menuId, dto);
+            return NoContent();
+        }
+
         [HttpDelete("{menuId}")]
         public ActionResult Delete([FromQuery] int espId, [FromRoute] int menuId)
         {
