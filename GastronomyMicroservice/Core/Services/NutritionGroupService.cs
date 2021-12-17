@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using GastronomyMicroservice.Core.Exceptions;
 using GastronomyMicroservice.Core.Fluent;
@@ -41,18 +42,17 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
         }
 
-        public void AddParticipant(int espId, int eudId, int nutiGrpId, ICollection<int> parcsIds)
+        public void AddParticipants(int espId, int eudId, int nutiGrpId, ICollection<ParticipantDatePair<int>> participants)
         {
             var models = new List<NutritionGroupToParticipant>();
 
-            var time = DateTime.Now;
-
-            foreach (var participantId in parcsIds)
+            foreach (var participant in participants)
             {
                 models.Add(new NutritionGroupToParticipant() { 
                     NutritionGroupId = nutiGrpId,
-                    ParticipantId = participantId,
-                    StartDate = time,
+                    ParticipantId = participant.ParticipantId,
+                    StartDate = participant.StartDate,
+                    EndDate = participant.EndDate,
                     EspId = espId,
                     CreatedEudId = eudId
                 });
@@ -72,6 +72,56 @@ namespace GastronomyMicroservice.Core.Services
             _context.SaveChanges();
 
             return model.Id;
+        }
+
+        public async Task Update(int espId, int eudId, int nutiGrpId, NutritionGroupUpdateDto dto)
+        {
+            var model = _context.NutritionGroups
+                 .Include(n => n.NutritionsGroupsToNutritionsPlans)
+                 .Include(n => n.NutritionsGroupsToParticipants)
+                 .Where(n => n.EspId == espId && n.Id == nutiGrpId)
+                 .FirstOrDefault();
+
+            if (model is null)
+            {
+                throw new NotFoundException($"Nutrtion group with id {nutiGrpId} NOT FOUND");
+            }
+
+            var strategy = _context.Database.CreateExecutionStrategy();
+            await strategy.ExecuteAsync(async () =>
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        model.Name = dto.Name;
+                        model.Description = dto.Description;
+                        model.LastUpdatedEudId = eudId;
+
+                        this.AddParticipants(espId, eudId, nutiGrpId, dto.ParticipantsToAdd);
+
+                        this.RemoveParticipants(espId, eudId, nutiGrpId, dto.ParticipantsToRemove);
+
+                        foreach (var item in dto.PlansToAdd)
+                        {
+                            this.SetNutritionPlan(espId, eudId,nutiGrpId, item.NutritionPlanId, item.StartDate, item.EndDate);
+                        }
+
+                        foreach (var item in dto.PlansToRemove)
+                        {
+                            this.RemoveNutritionPlan(espId, eudId, nutiGrpId, item);
+                        }
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }); 
         }
 
         public void Delete(int espId, int eudId, int nutiGrpId)
@@ -183,7 +233,8 @@ namespace GastronomyMicroservice.Core.Services
                .Where(ngtnp => ngtnp.EspId == espId && ngtnp.NutritionGroupId == nutiGrpId)
                .Select(ngtnp => new
                {
-                   ngtnp.NutritionPlan.Id,
+                   ngtnp.Id,
+                   nutritionPlanId = ngtnp.NutritionPlan.Id,
                    ngtnp.NutritionPlan.Code,
                    ngtnp.NutritionPlan.Name,
                    ngtnp.NutritionPlan.Description,

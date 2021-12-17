@@ -38,6 +38,14 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             return CreatedAtAction(nameof(GetById), new { espId = espId, nutiPlsId = id }, null);
         }
 
+        [HttpPut("{nutiPlsId}")]
+        public ActionResult Update([FromQuery] int espId, [FromRoute] int nutiPlsId, [FromBody] NutritionPlanCoreDto<int> dto)
+        {
+            int eudId = _headerContextService.GetEudId();
+            _nutritionPlanService.Update(espId, eudId, nutiPlsId, dto);
+            return NoContent();
+        }
+
         [HttpDelete("{nutiPlsId}")]
         public ActionResult Delete([FromQuery] int espId, [FromRoute] int nutiPlsId)
         {

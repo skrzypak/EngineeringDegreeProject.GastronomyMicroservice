@@ -5,6 +5,7 @@ using GastronomyMicroservice.Core.Interfaces.Services;
 using GastronomyMicroservice.Core.Models.Dto.NutritionGroup;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace GastronomyMicroservice.Core.Controllers.Single
 {
@@ -32,10 +33,10 @@ namespace GastronomyMicroservice.Core.Controllers.Single
         }
 
         [HttpPatch("{nutiGrpId}/participants")]
-        public ActionResult AddParticipants([FromQuery] int espId, [FromRoute] int nutiGrpId, [FromBody] ICollection<int> parcsIds)
+        public ActionResult AddParticipants([FromQuery] int espId, [FromRoute] int nutiGrpId, [FromBody] ICollection<ParticipantDatePair<int>> participants)
         {
             int eudId = _headerContextService.GetEudId();
-            _nutritionGroupService.AddParticipant(espId, eudId, nutiGrpId, parcsIds);
+            _nutritionGroupService.AddParticipants(espId, eudId, nutiGrpId, participants);
             return NoContent();
         }
 
@@ -45,6 +46,14 @@ namespace GastronomyMicroservice.Core.Controllers.Single
             int eudId = _headerContextService.GetEudId();
             var id = _nutritionGroupService.Create(espId, eudId, dto);
             return CreatedAtAction(nameof(GetById), new { espId = espId, nutiGrpId = id }, null);
+        }
+
+        [HttpPut("{nutiGrpId}")]
+        public async Task<ActionResult> Update([FromQuery] int espId, [FromRoute] int nutiGrpId, [FromBody] NutritionGroupUpdateDto dto)
+        {
+            int eudId = _headerContextService.GetEudId();
+            await _nutritionGroupService.Update(espId, eudId, nutiGrpId, dto);
+            return NoContent();
         }
 
         [HttpDelete("{nutiGrpId}")]

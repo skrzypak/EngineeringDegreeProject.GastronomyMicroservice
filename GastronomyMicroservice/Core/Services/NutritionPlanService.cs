@@ -76,6 +76,29 @@ namespace GastronomyMicroservice.Core.Services
             return model.Id;
         }
 
+        public void Update(int espId, int eudId, int nutiPlsId, NutritionPlanCoreDto<int> dto)
+        {
+            var model = _context.NutritionPlans
+                .Include(np => np.MenusToNutritonsPlans)
+                .Where(np => np.EspId == espId && np.Id == nutiPlsId)
+                .FirstOrDefault();
+
+            if (model is null)
+            {
+                throw new NotFoundException($"Nutriton plan with id {nutiPlsId} NOT FOUND");
+            }
+
+            var item = _mapper.Map<NutritionPlanCoreDto<int>, NutritionPlan>(dto);
+
+            model.Code = item.Code;
+            model.Name = item.Name;
+            model.Description = item.Description;
+            model.MenusToNutritonsPlans = item.MenusToNutritonsPlans;
+            model.LastUpdatedEudId = eudId;
+
+            _context.SaveChanges();
+        }
+
         public void Delete(int espId, int eudId, int nutiPlsId)
         {
             var model = _context.NutritionPlans

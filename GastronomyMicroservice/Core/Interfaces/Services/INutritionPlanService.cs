@@ -11,5 +11,6 @@ namespace GastronomyMicroservice.Core.Interfaces.Services
         public int AddMenu(int espId, int eudId, int nutiPlsId, int menuId, uint order);
         public void RemoveMenu(int espId, int eudId, int nutiPlsId, int menuToPlsId);
         public void Delete(int espId, int eudId, int nutiPlsId);
+        public void Update(int espId, int eudId, int nutiPlsId, NutritionPlanCoreDto<int> dto);
     }
 }
