@@ -34,6 +34,31 @@ namespace GastronomyMicroservice.Core.Services
             return model.Id;
         }
 
+        public void Update(int espId, int eudId, ParticipantDto<int> dto)
+        {
+            var model = _context.Participants
+                .Include(p => p.NutritionsGroupsToParticipants)
+                .Where(p => p.Id == dto.Id)
+                .Where(p => p.EspId == espId)
+                .FirstOrDefault();
+
+            if (model is null)
+            {
+                throw new NotFoundException($"Participant with ID {dto.Id} NOT FOUND in enterprsie with ID {espId}");
+            }
+
+            model.FirstName = dto.FirstName;
+            model.LastName = dto.LastName;
+            model.Description = dto.Description;
+
+            var item = _mapper.Map<ParticipantDto<int>, Participant>(dto);
+
+            model.NutritionsGroupsToParticipants = item.NutritionsGroupsToParticipants;
+            model.LastUpdatedEudId = eudId;
+
+            _context.SaveChanges();
+        }
+
         public void Delete(int espId, int eudId, int id)
         {
             var model = _context.Participants

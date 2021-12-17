@@ -8,5 +8,6 @@ namespace GastronomyMicroservice.Core.Interfaces.Services
         public object GetById(int espId, int id);
         public int Create(int espId, int eudId, ParticipantCoreDto<int> dto);
         public void Delete(int espId, int eudId, int id);
+        public void Update(int espId, int eudId, ParticipantDto<int> dto);
     }
 }

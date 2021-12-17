@@ -14,5 +14,6 @@ namespace GastronomyMicroservice.Core.Interfaces.Services
         public void Delete(int espId, int eudId, int dishId);
         public void CreateDishIngredients(int espId, int eudId, int dishId, ICollection<IngredientCoreDto> ingredients);
         public void DeleteDishIngredients(int espId, int eudId, int dishId, ICollection<int> ingredientsIds);
+        public void Update(int espId, int eudId, int dishId, DishCoreDto<IngredientCoreDto> dto);
     }
 }
