@@ -157,7 +157,11 @@ namespace GastronomyMicroservice.Core.Services
                             atp.Allergen.Name,
                             atp.Allergen.Description
                         })
-                    ).AsEnumerable()
+                    ).AsEnumerable(),
+                    Calories = d.Ingredients.Where(i => i.Product.Calories != null).Sum(i => i.Product.Calories * i.ValueOfUse),
+                    Proteins = d.Ingredients.Where(i => i.Product.Proteins != null).Sum(i => i.Product.Proteins * i.ValueOfUse),
+                    Carbohydrates = d.Ingredients.Where(i => i.Product.Carbohydrates != null).Sum(i => i.Product.Carbohydrates * i.ValueOfUse),
+                    Fats = d.Ingredients.Where(i => i.Product.Fats != null).Sum(i => i.Product.Fats * i.ValueOfUse),
                  })
                  .FirstOrDefault();
 

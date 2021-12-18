@@ -33,6 +33,10 @@ namespace GastronomyMicroservice.Core.Services
                    p.Name,
                    p.Unit,
                    p.Description,
+                   p.Calories,
+                   p.Proteins,
+                   p.Carbohydrates,
+                   p.Fats
                })
                .OrderBy(px => px.Name)
                .ToHashSet();

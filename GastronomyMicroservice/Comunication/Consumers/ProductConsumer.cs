@@ -80,7 +80,11 @@ namespace GastronomyMicroservice.Comunication.Consumers
                 Unit = val.Unit,
                 Description = val.Description,
                 EspId = val.EspId,
-                AllergensToProducts = new HashSet<AllergenToProduct>()
+                AllergensToProducts = new HashSet<AllergenToProduct>(),
+                Calories = val.Calories,
+                Proteins = val.Proteins,
+                Carbohydrates = val.Carbohydrates,
+                Fats = val.Fats
             };
 
             foreach(var map in val.Allergens)

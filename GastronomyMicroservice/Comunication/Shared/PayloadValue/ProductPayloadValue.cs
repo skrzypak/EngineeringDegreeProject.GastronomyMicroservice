@@ -17,5 +17,9 @@ namespace Comunication.Shared.PayloadValue
         public virtual IDictionary<int, CRUD> Allergens { get; set; } = new Dictionary<int, CRUD>();
         public int EspId { get; set; }
         public int EudId { get; set; }
+        public int? Calories { get; set; }
+        public float? Proteins { get; set; }
+        public float? Carbohydrates { get; set; }
+        public float? Fats { get; set; }
     }
 }

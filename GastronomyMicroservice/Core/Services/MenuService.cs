@@ -105,7 +105,8 @@ namespace GastronomyMicroservice.Core.Services
                         dtm.Meal, menuDishId = dtm.Id, dtm.DishId, dtm.Dish.Name, dtm.Dish.Description,
                         Ingredients = dtm.Dish.Ingredients.Select(i => new
                         {
-                            i.ProductId, i.Product.Name, i.Product.Code, i.ValueOfUse, i.Product.Unit
+                            i.ProductId, i.Product.Name, i.Product.Code, i.ValueOfUse, i.Product.Unit, 
+                            i.Product.Calories, i.Product.Proteins, i.Product.Carbohydrates, i.Product.Fats
                         }),
                         Allergens = dtm.Dish.Ingredients.SelectMany(i => i.Product.AllergensToProducts.Select(atp => new
                         {
@@ -121,11 +122,15 @@ namespace GastronomyMicroservice.Core.Services
                                 Dishes = dxgg.Select(g => new { g.menuDishId, g.DishId, g.Name, g.Description, g.Ingredients  })
                             }),
                     Ingredients = dxg.SelectMany(g => g.Value.SelectMany(gg => gg.Ingredients)).ToList()
-                                 .GroupBy(ggg => new { ggg.ProductId, ggg.Code, ggg.Name, ggg.Unit }).Select(gggx  => new { 
+                                 .GroupBy(ggg => new { ggg.ProductId, ggg.Code, ggg.Name, ggg.Unit, ggg.Calories, ggg.Proteins, ggg.Carbohydrates, ggg.Fats }).Select(gggx  => new { 
                                     gggx.Key,
                                     Total = gggx.Sum(g => g.ValueOfUse)
                                  }),
-                    Allergens = dxg.SelectMany(g => g.Value.SelectMany(gg => gg.Allergens)).ToList().Distinct()
+                    Allergens = dxg.SelectMany(g => g.Value.SelectMany(gg => gg.Allergens)).ToList().Distinct(),
+                    Calories = dxg.SelectMany(g => g.Value.SelectMany(gg => gg.Ingredients)).Where(i => i.Calories != null).Sum(i => i.Calories * i.ValueOfUse),
+                    Proteins = dxg.SelectMany(g => g.Value.SelectMany(gg => gg.Ingredients)).Where(i => i.Proteins != null).Sum(i => i.Proteins * i.ValueOfUse),
+                    Carbohydrates = dxg.SelectMany(g => g.Value.SelectMany(gg => gg.Ingredients)).Where(i => i.Carbohydrates != null).Sum(i => i.Carbohydrates * i.ValueOfUse),
+                    Fats = dxg.SelectMany(g => g.Value.SelectMany(gg => gg.Ingredients)).Where(i => i.Fats != null).Sum(i => i.Fats * i.ValueOfUse),
                 }).FirstOrDefault();
 
             if (dto is null)
