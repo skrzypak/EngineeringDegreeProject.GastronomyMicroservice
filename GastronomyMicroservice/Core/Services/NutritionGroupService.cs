@@ -217,6 +217,7 @@ namespace GastronomyMicroservice.Core.Services
             var time = DateTime.Now;
 
             models.ForEach(m => m.EndDate = time);
+            models.ForEach(m => m.LastUpdatedEudId = eudId);
 
             _context.SaveChanges();
         }
