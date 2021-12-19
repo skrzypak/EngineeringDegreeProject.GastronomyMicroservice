@@ -104,14 +104,14 @@ namespace GastronomyMicroservice.Core.Controllers
                                 .Where(mtnp => (mtnp.Order - 1) == (queryDate.Date - ngtnp.StartDate.Date).Days % ngtnp.NutritionPlan.MenusToNutritonsPlans.Count)
                                 .ToList()
                         }).FirstOrDefault(),
-                    //CurrentParticipants = ng.NutritionsGroupsToParticipants
-                    //    .Where(ngtp => ngtp.StartDate.Date <= queryDate.Date && (ngtp.EndDate == null || ngtp.EndDate.Value.Date >= queryDate.Date))
-                    //    .Select(ngtp => new
-                    //    {
-                    //        ngtp.ParticipantId,
-                    //        ngtp.Participant.FirstName,
-                    //        ngtp.Participant.LastName
-                    //    }).OrderBy(ngtpo => ngtpo.LastName).ThenBy(ngtpo => ngtpo.FirstName).ToList()
+                    CurrentParticipants = ng.NutritionsGroupsToParticipants
+                        .Where(ngtp => ngtp.StartDate.Date <= queryDate.Date && (ngtp.EndDate == null || ngtp.EndDate.Value.Date >= queryDate.Date))
+                        .Select(ngtp => new
+                        {
+                            ngtp.ParticipantId,
+                            ngtp.Participant.FirstName,
+                            ngtp.Participant.LastName
+                        }).OrderBy(ngtpo => ngtpo.LastName).ThenBy(ngtpo => ngtpo.FirstName).ToList()
                 }).OrderBy(ngx => ngx.Name).ToList();
 
             return Ok(dto);
